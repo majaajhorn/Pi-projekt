@@ -1,4 +1,4 @@
-// store/index.js
+// src/store/index.js
 import { createStore } from 'vuex';
 
 const store = createStore({
@@ -8,16 +8,17 @@ const store = createStore({
   mutations: {
     setCurrentUser(state, user) {
       state.currentUser = user;
-    }
+    },
   },
   actions: {
     setCurrentUser({ commit }, user) {
       commit('setCurrentUser', user);
-    }
+    },
   },
   getters: {
     currentUser: state => state.currentUser,
-  }
+    isAuthenticated: state => !!state.currentUser,
+  },
 });
 
 export default store;

@@ -67,41 +67,48 @@ export default {
     };
   },
   methods: {
-    async submitForm() {
-      try {
-        const currentUser = auth.currentUser;
-        if (!currentUser) {
-          console.error('No user logged in.');
-          return;
-        }
-
-        let imageUrl = '';
-        if (this.image) {
-          const storageRef = ref(storage, `recipes/${currentUser.uid}/${this.image.name}`);
-          await uploadBytes(storageRef, this.image);
-          imageUrl = await getDownloadURL(storageRef);
-        }
-
-        await addDoc(collection(db, 'users', currentUser.uid, 'recepti'), {
-          title: this.title,
-          ingredients: this.ingredients,
-          courses: this.courses,
-          prepTime: this.prepTime,
-          cookingTime: this.cookingTime,
-          methods: this.methods,
-          imageUrl: imageUrl
-        });
-
-        alert('Recipe created successfully!');
-        this.resetForm();
-      } catch (error) {
-        console.error('Error creating recipe:', error);
-        alert('An error occurred while creating the recipe.');
-      }
-    },
     handleImageUpload(event) {
-      this.image = event.target.files[0];
-    },
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.image = e.target.result; // Store the URL of the image
+    };
+    reader.readAsDataURL(file);
+  }
+},
+
+async submitForm() {
+  try {
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      console.error('No user logged in.');
+      return;
+    }
+
+    let imageUrl = '';
+    if (this.image) {
+      // No need to upload the image, directly use the URL
+      imageUrl = this.image;
+    }
+
+    await addDoc(collection(db, 'users', currentUser.uid, 'recepti'), {
+      title: this.title,
+      ingredients: this.ingredients,
+      courses: this.courses,
+      prepTime: this.prepTime,
+      cookingTime: this.cookingTime,
+      methods: this.methods,
+      imageUrl: imageUrl // Store the URL in Firestore
+    });
+
+    alert('Recipe created successfully!');
+    this.resetForm();
+  } catch (error) {
+    console.error('Error creating recipe:', error);
+    alert('An error occurred while creating the recipe.');
+  }
+},
     resetForm() {
       this.title = '';
       this.ingredients = '';

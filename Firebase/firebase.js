@@ -2,6 +2,8 @@ import { initializeApp } from "firebase/app";
 import { getFirestore} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
+import { onAuthStateChanged } from 'firebase/auth';
+import store from '../store/store';
 
 const firebaseConfig = {
   apiKey: "AIzaSyC56wrFHPtAL9k6I__BkmKXolxiJHo3-Pw",
@@ -18,6 +20,11 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const storage = getStorage(app);
+
+
+onAuthStateChanged(auth, user => {
+  store.commit('setCurrentUser', user || null);
+});
 
 export {
     db,
