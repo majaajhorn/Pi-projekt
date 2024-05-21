@@ -35,13 +35,26 @@ export default {
         const userCredential = await signInWithEmailAndPassword(auth, this.email, this.password);
         const user = userCredential.user;
         console.log('User:', user);
-        this.$store.commit('setCurrentUser', user);
+        // Optionally, you can perform additional actions after successful login
         this.$router.push("/mainPage");
       } catch (error) {
         console.error('Error logging in:', error);
         alert('Failed to log in. Please check your credentials.');
       }
     },
+    /*async handleSubmit() {
+  const auth = getAuth();
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, this.email, this.password);
+    const user = userCredential.user;
+    console.log('User:', user);
+    // Pass the password to the router when redirecting to MyProfile
+    this.$router.push({ name: "MyProfile", query: { password: this.password } });
+  } catch (error) {
+    console.error('Error logging in:', error);
+    alert('Failed to log in. Please check your credentials.');
+  }
+},*/
     goToSignUp() {
       this.$router.push("/SignUp");
     }

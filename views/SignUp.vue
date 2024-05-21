@@ -1,7 +1,7 @@
 <template>
-  <div class="login-container">
-    <h2>Login</h2>
-    <form @submit.prevent="handleSubmit">
+  <div class="signup-container">
+    <h2>SIGN UP</h2>
+    <form @submit.prevent="handleSignUp">
       <div class="form-group">
         <label for="email">Email</label>
         <input type="email" id="email" v-model="email" required>
@@ -10,18 +10,20 @@
         <label for="password">Password</label>
         <input type="password" id="password" v-model="password" required>
       </div>
-      <button type="submit">LOGIN</button>
+      <button type="submit">SIGN UP</button>
     </form>
-    <h4>Don't have account? Click to sign up </h4>
-    <button @click="goToSignUp" type="button" id="btn_vodi_na_signup">Click me</button>
+    <h4>Already have an account? Click to log in</h4>
+    <button @click="goToLogin" type="button">Login</button>
   </div>
 </template>
 
 <script>
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from '@/Firebase/firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 
 export default {
-  name: 'LoginForm',
+  name: 'SignUpForm',
   data() {
     return {
       email: '',
@@ -29,41 +31,35 @@ export default {
     };
   },
   methods: {
-    async handleSubmit() {
-      const auth = getAuth();
+    async handleSignUp() {
       try {
-        const userCredential = await signInWithEmailAndPassword(auth, this.email, this.password);
-        // User is signed in
-        const user = userCredential.user;
-        console.log('User:', user);
-        // Store the user in the application's state
-        this.$store.commit('setCurrentUser', user);
-        // Navigate to the main page
+        const userCredential = await createUserWithEmailAndPassword(auth, this.email, this.password);
+        // New user is signed up
+        const userRef = doc(db, "users", userCredential.user.uid);
+        await setDoc(userRef, {
+          email: this.email,
+          password: this.password
+        });
+
+        console.log('New User:', userCredential.user);
+        // Optionally, you can do something like sending a verification email here
+        // Redirect to the main page or perform other actions as needed
         this.$router.push("/mainPage");
       } catch (error) {
-        console.error('Error logging in:', error);
-        alert('Failed to log in. Please check your credentials.');
+        console.error('Error signing up:', error);
+        // Handle sign-up errors here
+        alert('Failed to sign up. Please try again.');
       }
     },
-    goToSignUp() {
-      this.$router.push("/SignUp");
+    goToLogin() {
+      this.$router.push("/login");
     }
   }
 };
 </script>
 
 <style scoped>
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f5f5f5;
-}
-
-.login-container {
+.signup-container {
   background-color: #fff;
   padding: 20px;
   border-radius: 10px;

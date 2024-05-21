@@ -10,7 +10,7 @@
 
     
     <nav class="navbar">
-    <router-link to="/user" class="nav-item">
+    <router-link to="/MyProfile" class="nav-item">
       <i class="fas fa-user"></i>
     </router-link>
     <router-link to="/MyRecipes" class="nav-item">
@@ -30,8 +30,10 @@
   </template>
   
   <script>
+  import{auth} from '@/Firebase/firebase'
+  import { signOut , onAuthStateChanged} from 'firebase/auth';
   import SearchButton from '../components/SearchButton.vue';
-
+ 
   
   export default {
     name: 'MainPage',
@@ -43,7 +45,26 @@
             this.$router.push({
                 path: '/NewRecipe'
             })
-        }
+        },
+    async logout () {
+      try {
+        await signOut(auth);
+        window.alert("Successfully signed out!");
+        this.$router.push('/');
+      } catch(error) {
+        console.error("Logout error", error);
+        window.alert("Log out has not been completed");
+      }
+    },
+  },
+  mounted() {
+    onAuthStateChanged(auth, (user) => {
+      if(user){
+        this.currentUser = user;
+      } else {
+        this.currentUser = null;
+        } 
+      });
     }
   };
 

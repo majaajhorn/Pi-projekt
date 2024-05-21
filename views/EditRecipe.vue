@@ -58,8 +58,14 @@ export default {
     };
   },
   created() {
+  if (this.$route.params.recipe) {
     this.recipe = this.$route.params.recipe;
-  },
+  } else {
+    // Handle case where route params are not available
+    console.error('Recipe data not found in route parameters.');
+  }
+},
+
   methods: {
     async submitForm() {
       try {
