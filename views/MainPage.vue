@@ -13,10 +13,10 @@
     <router-link to="/user" class="nav-item">
       <i class="fas fa-user"></i>
     </router-link>
-    <router-link to="/recipes" class="nav-item">
+    <router-link to="/MyRecipes" class="nav-item">
       <i class="fas fa-utensils"></i>
     </router-link>
-    <router-link to="/" class="nav-item">
+    <router-link to="/MainPage" class="nav-item">
       <i class="fas fa-home"></i>
     </router-link>
     <router-link to="/favorites" class="nav-item">

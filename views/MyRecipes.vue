@@ -4,17 +4,18 @@
     <div v-if="loading">Loading recipes...</div>
     <div v-else-if="recipes.length === 0">No recipes found.</div>
     <div v-else>
-      <ul>
+      <ul class="recipe-list">
         <li v-for="recipe in recipes" :key="recipe.id" class="recipe-item">
-          <h3>{{ recipe.title }}</h3>
-          <img :src="recipe.imageUrl" alt="Recipe Image" class="recipe-image" v-if="recipe.imageUrl" />
-          <p><strong>Ingredients:</strong> {{ recipe.ingredients }}</p>
-          <p><strong>Course:</strong> {{ recipe.courses }}</p>
-          <p><strong>Prep Time:</strong> {{ recipe.prepTime }} minutes</p>
-          <p><strong>Cooking Time:</strong> {{ recipe.cookingTime }} minutes</p>
-          <p><strong>Methods:</strong> {{ recipe.methods }}</p>
-          <button @click="editRecipe(recipe)">Edit</button>
-          <button @click="confirmDelete(recipe.id)">Delete</button>
+          <div class="recipe-image-container">
+            <router-link :to="{ name: 'RecipeDetails', params: { id: recipe.id } }" class="no-decoration">
+              <img :src="recipe.imageUrl" alt="Recipe Image" class="recipe-image" v-if="recipe.imageUrl" />
+              <h3>{{ recipe.title }}</h3>
+            </router-link>
+          </div>
+          <div class="button-container">
+            <button @click="editRecipe(recipe)" class="recipe-button"><i class="fas fa-edit"></i></button>
+            <button @click="confirmDelete(recipe.id)" class="recipe-button"><i class="fas fa-trash-alt"></i></button>
+          </div>
         </li>
       </ul>
       <div v-if="recipeBeingEdited" class="edit-recipe">
@@ -52,17 +53,37 @@
             <label for="methods">Methods:</label>
             <textarea id="methods" v-model="recipeBeingEdited.methods" rows="4" required></textarea>
           </div>
-          <button type="submit">Save Changes</button>
-          <button type="button" @click="cancelEdit">Cancel</button>
+          <button type="submit" class="recipe-button">Save Changes</button>
+          <button type="button" @click="cancelEdit" class="recipe-button">Cancel</button>
         </form>
       </div>
     </div>
   </div>
+
+  <nav class="navbar">
+    <router-link to="/user" class="nav-item no-decoration">
+      <i class="fas fa-user"></i>
+    </router-link>
+    <!-- Directly handle click event for utensils icon -->
+    <div class="nav-item" @click="stayOnPage">
+      <i class="fas fa-utensils"></i>
+    </div>
+    <router-link to="/mainPage" class="nav-item no-decoration">
+      <i class="fas fa-home"></i>
+    </router-link>
+    <router-link to="/favorites" class="nav-item no-decoration">
+      <i class="fas fa-heart"></i>
+    </router-link>
+    <button @click="logout" class="nav-item logout">
+      <i class="fa-solid fa-arrow-right-to-bracket"></i>
+    </button>
+  </nav>
 </template>
 
 <script>
 import { db } from '@/Firebase/firebase';
 import { collection, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { mapState } from 'vuex';
 
 export default {
   name: 'MyRecipes',
@@ -75,14 +96,17 @@ export default {
     };
   },
   computed: {
-    currentUser() {
-      return this.$store.state.currentUser;
-    }
+    ...mapState(['currentUser']),
   },
   async created() {
     await this.fetchRecipes();
   },
   methods: {
+    stayOnPage() {
+      // Optionally, you can add some logic here if needed
+      // For now, do nothing to stay on the same page
+    },
+
     async fetchRecipes() {
       try {
         if (!this.currentUser) {
@@ -146,7 +170,8 @@ export default {
 
         alert('Recipe updated successfully!');
         this.recipeBeingEdited = null;
-        await this.fetchRecipes(); // Refresh the list of recipes
+        await
+        this.fetchRecipes(); // Refresh the list of recipes
       } catch (error) {
         console.error('Error updating recipe:', error);
         alert('An error occurred while updating the recipe.');
@@ -154,6 +179,12 @@ export default {
     },
     cancelEdit() {
       this.recipeBeingEdited = null;
+    },
+    viewRecipeDetails(recipeId) {
+      this.$router.push({ name: 'RecipeDetails', params: { id: recipeId } });
+    },
+    logout() {
+      // Your logout logic here
     }
   }
 };
@@ -161,9 +192,10 @@ export default {
 
 <style scoped>
 .my-recipes {
-  max-width: 800px;
+  max-width: 600px;
   margin: 0 auto;
   padding: 20px;
+  padding-bottom: 80px; /* Add padding to the bottom */
 }
 
 h2 {
@@ -171,36 +203,143 @@ h2 {
   margin-bottom: 20px;
 }
 
+.recipe-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  list-style: none;
+  padding-left: 0;
+}
+
 .recipe-item {
-  border: 1px solid #ccc;
-  padding: 20px;
+  width: calc(33.33% - 20px); /* Adjust width for responsiveness */
+  margin-bottom: 20px;
+  background-color: #C7F9CC;
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content horizontally */
+  text-align: center; /* Center text */
+}
+
+.recipe-image-container {
+  width: 150px;
   margin-bottom: 10px;
-  border-radius: 5px;
-}
-
-.recipe-item h3 {
-  margin-top: 0;
-}
-
-.recipe-item p {
-  margin: 5px 0;
+  display: flex;
+  justify-content: center; /* Center image horizontally */
 }
 
 .recipe-image {
-  max-width: 100%;
-  height: auto;
-  margin-bottom: 10px;
-}
-
-.edit-recipe {
-  border: 1px solid #ccc;
-  padding: 20px;
-  margin-top: 20px;
+  width: 100%;
   border-radius: 5px;
 }
 
+.recipe-details {
+  text-align: center;
+}
+
+.recipe-details h3 {
+  font-size: 1.2em;
+  margin: 0;
+}
+
+.button-container {
+  margin-top: auto; /* Push buttons to the bottom */
+  display: flex;
+  justify-content: center; /* Center buttons horizontally */
+}
+
+.button-container button {
+  margin-right: 5px;
+}
+
+button {
+  padding: 8px 12px;
+  border: none;
+  background-color: #007BFF;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button[type="button"] {
+  background-color: #6c757d;
+}
+
+button[type="button"]:hover {
+  background-color: #5a6268;
+}
+
+.navbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #C7F9CC; /* Change background color here */
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  box-shadow: 0px -1px 5px rgba(0, 0, 0, 0.1);
+  border-top-left-radius: 20px; /* Rounded corners for the navbar */
+  border-top-right-radius: 20px; /* Rounded corners for the navbar */
+}
+
+.nav-item {
+  color: #333333;
+  font-size: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-item i {
+  cursor: pointer;
+  font-size: 24px; /* Adjust icon size */
+  padding-bottom: 5px; /* Adjust padding between icon and text */
+}
+
+/* Override color for logout icon */
+.nav-item.logout i {
+  color: #333333 !important;
+}
+
+/* Set background color of logout button to transparent */
+.nav-item.logout {
+  background-color: transparent !important;
+}
+
+/* Prevent color change on hover for logout button */
+.nav-item.logout:hover {
+  color: #333333 !important;
+}
+
+/* Remove underline from links */
+.no-decoration {
+  text-decoration: none;
+}
+
+.edit-recipe {
+  max-width: 400px;
+  margin: 0 auto;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.edit-recipe h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 .form-group {
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .form-group label {
@@ -213,6 +352,38 @@ h2 {
 .form-group select {
   width: 100%;
   padding: 8px;
-  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.form-group select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 8px 30px 8px 8px;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="#000000" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M7 10l5 5 5-5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position-x: calc(100% - 10px);
+  background-position-y: 50%;
+}
+
+.form-group button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #007BFF;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.form-group button:hover {
+  background-color: #0056b3;
 }
 </style>
+
+
+
+
