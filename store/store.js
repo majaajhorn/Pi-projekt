@@ -23,6 +23,7 @@ const store = createStore({
 
 export default store;
 
+/*
 const password = ref('');
 onMounted(() => {
   const user = store.state.currentUser;
@@ -30,3 +31,4 @@ onMounted(() => {
     password.value = user.password;
   }
 });
+*/
