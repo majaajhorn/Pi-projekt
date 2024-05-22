@@ -6,7 +6,7 @@
           <div class="form-group">
             <label for="profilePicture">Profile Picture:</label>
             <input type="file" id="profilePicture" @change="onFileChange" accept="image/*">
-            <button v-show="profilePictureToSave && !pictureSaved" @click="saveProfilePicture" type="button">Save Picture</button>
+            <button v-show="profilePictureToSave && !pictureSaved" @click="saveProfilePicture" class="save-picture-btn" type="button">Save Picture</button>
             <div v-show="profilePictureToShow || profilePictureUrl" class="profile-picture">
               <img :src="profilePictureToShow || profilePictureUrl" alt="Profile Picture">
             </div>
@@ -17,11 +17,12 @@
           </div>
           <div class="form-group password-group">
             <label for="password">New Password:</label>
-            <input :type="passwordFieldType" id="password" v-model="newPassword">
-            <i @click="togglePasswordVisibility" class="fas" :class="passwordFieldIcon"></i>
+            <div class="password-input-container">
+              <input :type="passwordFieldType" id="password" v-model="newPassword">
+              <i @click="togglePasswordVisibility" class="fas" :class="passwordFieldIcon"></i>
+            </div>
           </div>
-          <button type="submit">Update Profile</button>
-          <button type="button" @click="confirmDeleteAccount" class="delete-button">Delete Account</button>
+          <button class="update-profile-btn" type="submit">Update Profile</button>
         </form>
       </div>
     </div>
@@ -31,7 +32,7 @@
   import { ref, onMounted } from 'vue';
   import { auth, db, storage } from '@/Firebase/firebase';
   import { getDownloadURL, ref as storageRef, uploadBytes } from 'firebase/storage';
-  import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+  import { doc, getDoc, updateDoc } from 'firebase/firestore';
   import { reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth';
   
   export default {
@@ -56,7 +57,6 @@
             if (userData.profilePicture) {
               profilePictureUrl.value = await getDownloadURL(storageRef(storage, userData.profilePicture));
             }
-            // Optionally load other user data
           }
         }
       };
@@ -86,30 +86,20 @@
         passwordFieldIcon.value = passwordFieldIcon.value === 'fa-eye' ? 'fa-eye-slash' : 'fa-eye';
       };
   
-      const confirmDeleteAccount = () => {
-        if (confirm('Are you sure you want to delete your account?')) {
-          deleteAccount();
-        }
-      };
-  
-      const deleteAccount = async () => {
-        const user = auth.currentUser;
-        if (user) {
-          await deleteDoc(doc(db, 'users', user.uid));
-          await user.delete();
-          alert('Your account has been deleted.');
-          // Redirect to login page or home page
-        }
-      };
-  
       const reauthenticateUser = async () => {
         const user = auth.currentUser;
         if (user) {
-          const credential = EmailAuthProvider.credential(user.email, prompt('Please enter your current password:'));
-          try {
-            await reauthenticateWithCredential(user, credential);
-          } catch (error) {
-            console.error('Reauthentication failed:', error);
+          const currentPassword = prompt('Please enter your current password:');
+          if (currentPassword) {
+            const credential = EmailAuthProvider.credential(user.email, currentPassword);
+            try {
+              await reauthenticateWithCredential(user, credential);
+            } catch (error) {
+              console.error('Reauthentication failed:', error);
+              throw new Error('Reauthentication failed. Please try again.');
+            }
+          } else {
+            throw new Error('Reauthentication cancelled.');
           }
         }
       };
@@ -124,6 +114,7 @@
             alert('Password updated successfully.');
           } catch (error) {
             console.error('Error updating password:', error);
+            alert('Failed to update password. Please try again.');
           }
         }
       };
@@ -141,7 +132,6 @@
         onFileChange,
         saveProfilePicture,
         togglePasswordVisibility,
-        confirmDeleteAccount,
         profilePictureToShow,
         updateProfile,
       };
@@ -199,6 +189,10 @@
     position: relative;
   }
   
+  .password-input-container {
+    position: relative;
+  }
+  
   .password-group i {
     position: absolute;
     top: 50%;
@@ -207,15 +201,39 @@
     cursor: pointer;
   }
   
-  .delete-button {
+  .save-picture-btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .save-picture-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  .update-profile-btn {
     display: block;
     width: 100%;
     padding: 10px;
-    background-color: #ff4d4d;
-    color: #fff;
+    background-color: #28a745;
     border: none;
+    color: white;
     border-radius: 5px;
     cursor: pointer;
   }
-  </style>
+  .save-picture-btn:hover {
+  background-color: #0056b3;
+}
+
+.update-profile-btn:hover {
+  background-color: #218838;
+}
+</style>
+
   
