@@ -1,52 +1,66 @@
 <template>
-  <div class="login-container">
-    <h2>Login</h2>
-    <form @submit.prevent="handleSubmit">
+  <div class="signup-container">
+    <h2>SIGN UP</h2>
+    <form @submit.prevent="handleSignUp">
       <div class="form-group">
         <label for="email">Email</label>
         <input type="email" id="email" v-model="email" required>
       </div>
       <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" id="password" v-model="password" required>
+        <input type="password" id="password" v-model="password" @input="showPasswordHint = true" required>
+        <small class="password-hint" v-if="showPasswordHint">Password must be at least 6 characters long, contain at least one uppercase letter and one number.</small>
       </div>
-      <button type="submit">LOGIN</button>
+      <button type="submit">SIGN UP</button>
     </form>
-    <h4>Don't have account? Click to sign up </h4>
-    <button @click="goToSignUp" type="button" id="btn_vodi_na_signup">Click me</button>
+    <h4>Already have an account? Click to log in</h4>
+    <button @click="goToLogin" type="button">Login</button>
   </div>
 </template>
 
 <script>
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from '@/Firebase/firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 
 export default {
-  name: 'LoginForm',
+  name: 'SignUpForm',
   data() {
     return {
       email: '',
-      password: ''
+      password: '',
+      showPasswordHint: false
     };
   },
   methods: {
-    async handleSubmit() {
-      const auth = getAuth();
+    validatePassword(password) {
+      const hasUpperCase = /[A-Z]/.test(password);
+      const hasNumber = /[0-9]/.test(password);
+      return password.length >= 6 && hasUpperCase && hasNumber;
+    },
+    async handleSignUp() {
+      if (!this.validatePassword(this.password)) {
+        alert('Password must be at least 6 characters long, contain at least one uppercase letter and one number.');
+        return;
+      }
+      
       try {
-        const userCredential = await signInWithEmailAndPassword(auth, this.email, this.password);
-        // User is signed in
-        const user = userCredential.user;
-        console.log('User:', user);
-        // Store the user in the application's state
-        this.$store.commit('setCurrentUser', user);
-        // Navigate to the main page
+        const userCredential = await createUserWithEmailAndPassword(auth, this.email, this.password);
+        const userRef = doc(db, "users", userCredential.user.uid);
+        await setDoc(userRef, {
+          email: this.email,
+          password: this.password
+        });
+
+        console.log('New User:', userCredential.user);
         this.$router.push("/mainPage");
       } catch (error) {
-        console.error('Error logging in:', error);
-        alert('Failed to log in. Please check your credentials.');
+        console.error('Error signing up:', error);
+        alert('Failed to sign up. Please try again.');
       }
     },
-    goToSignUp() {
-      this.$router.push("/SignUp");
+    goToLogin() {
+      this.$router.push("/login");
     }
   }
 };
@@ -54,22 +68,22 @@ export default {
 
 <style scoped>
 body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
   margin: 0;
   font-family: Arial, sans-serif;
   background-color: #f5f5f5;
 }
 
-.login-container {
+.signup-container {
   background-color: #fff;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   width: 300px;
   text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 h2 {
@@ -111,5 +125,12 @@ button {
 
 button:hover {
   background-color: #5cc77a;
+}
+
+.password-hint {
+  display: block;
+  margin-top: 5px;
+  font-size: 12px;
+  color: #666;
 }
 </style>

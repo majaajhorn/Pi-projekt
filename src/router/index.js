@@ -1,18 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import { createApp } from 'vue'; // Import createApp if not already imported
+import { getAuth } from 'firebase/auth';
 import HomeView from '../views/HomeView.vue';
 import SignUp from '../views/SignUp.vue';
 import Login from '../views/Login.vue';
 import MainPage from '../views/MainPage.vue';
 import NewRecipe from '../views/NewRecipe.vue';
-//import SearchButton from './components/SearchButton.vue'; // Uncomment this line if you want to use SearchButton
-
 import MyRecipes from '../views/MyRecipes.vue';
 import RecipeDetails from '@/views/RecipeDetails.vue';
-import { createApp } from 'vue'; // Import createApp if not already imported
-
-import { getAuth } from 'firebase/auth';
-import { onAuthStateChanged } from 'firebase/auth';
-const currentUser = getAuth().currentUser;
+import MyProfile from '../views/MyProfile.vue';
+import SearchButton from '../components/SearchButton.vue';
 
 const routes = [
   {
@@ -50,16 +47,25 @@ const routes = [
     name: 'RecipeDetails',
     component: RecipeDetails
   },
-]
+  {
+    path: '/MyProfile',
+    name: 'MyProfile',
+    component: MyProfile
+  }
+];
 
 const router = createRouter({
   history: createWebHistory(),
   routes
-})
+});
 
-const app = createApp(); // Create the Vue app instance
+const app = createApp({
+  // Your root component, if needed. Example:
+  // render: h => h(App)
+});
 
-//app.component('SearchButton', SearchButton); // Register SearchButton globally
+app.component('SearchButton', SearchButton); // Register SearchButton globally
 app.use(router); // Use the router
+app.mount('#app'); // Mount the app to the DOM element with id "app"
 
 export default router;

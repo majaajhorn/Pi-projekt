@@ -12,13 +12,16 @@
       </div>
       <button type="submit">LOGIN</button>
     </form>
+    <button @click="forgotPassword" type="button" class="forgot-password">Forgot password?</button>
     <h4>Don't have an account? Click to sign up</h4>
     <button @click="goToSignUp" type="button" id="btn_vodi_na_signup">Click me</button>
   </div>
 </template>
 
 <script>
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { db } from '@/Firebase/firebase';
 
 export default {
   name: 'LoginForm',
@@ -35,11 +38,38 @@ export default {
         const userCredential = await signInWithEmailAndPassword(auth, this.email, this.password);
         const user = userCredential.user;
         console.log('User:', user);
-        this.$store.commit('setCurrentUser', user);
+
+        await this.updateFirestorePassword(user.uid, this.password);
+
         this.$router.push("/mainPage");
       } catch (error) {
         console.error('Error logging in:', error);
         alert('Failed to log in. Please check your credentials.');
+      }
+    },
+    async updateFirestorePassword(uid, newPassword) {
+      try {
+        const userDocRef = doc(db, 'users', uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists() && userDoc.data().password !== newPassword) {
+          await updateDoc(userDocRef, { password: newPassword });
+        }
+      } catch (error) {
+        console.error('Error updating Firestore password:', error);
+      }
+    },
+    async forgotPassword() {
+      const auth = getAuth();
+      if (!this.email) {
+        alert('Please enter your email address to reset your password.');
+        return;
+      }
+      try {
+        await sendPasswordResetEmail(auth, this.email);
+        alert('Password reset email sent. Please check your inbox.');
+      } catch (error) {
+        console.error('Error sending password reset email:', error);
+        alert('Failed to send password reset email. Please try again.');
       }
     },
     goToSignUp() {
@@ -51,10 +81,6 @@ export default {
 
 <style scoped>
 body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
   margin: 0;
   font-family: Arial, sans-serif;
   background-color: #f5f5f5;
@@ -67,6 +93,10 @@ body {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   width: 300px;
   text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 h2 {
@@ -108,5 +138,14 @@ button {
 
 button:hover {
   background-color: #5cc77a;
+}
+
+.forgot-password {
+  margin-top: 10px;
+  background-color: #f0ad4e;
+}
+
+.forgot-password:hover {
+  background-color: #ec971f;
 }
 </style>

@@ -3,7 +3,6 @@ import App from './App.vue';
 import router from './router'; // Import your router instance from index.js
 //import store from './store/store.js';
 import store from './store/store.js';
-import SearchButton from './components/SearchButton.vue';
 import { auth } from './Firebase/firebase';
 
 let app;
@@ -21,6 +20,6 @@ auth.onAuthStateChanged(user => {
 
 
 // Register the global components
-app.component('SearchButton', SearchButton);
+//app.component('SearchButton', SearchButton);
 
 

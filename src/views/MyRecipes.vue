@@ -58,35 +58,21 @@
         </form>
       </div>
     </div>
+    <Navbar />
   </div>
-
-  <nav class="navbar">
-    <router-link to="/user" class="nav-item no-decoration">
-      <i class="fas fa-user"></i>
-    </router-link>
-    <!-- Directly handle click event for utensils icon -->
-    <div class="nav-item" @click="stayOnPage">
-      <i class="fas fa-utensils"></i>
-    </div>
-    <router-link to="/mainPage" class="nav-item no-decoration">
-      <i class="fas fa-home"></i>
-    </router-link>
-    <router-link to="/favorites" class="nav-item no-decoration">
-      <i class="fas fa-heart"></i>
-    </router-link>
-    <button @click="logout" class="nav-item logout">
-      <i class="fa-solid fa-arrow-right-to-bracket"></i>
-    </button>
-  </nav>
 </template>
 
 <script>
+import Navbar from '../components/Navbar.vue'; // Adjust the path as per your project structure
 import { db } from '@/Firebase/firebase';
 import { collection, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { mapState } from 'vuex';
 
 export default {
   name: 'MyRecipes',
+  components: {
+    Navbar
+  },
   data() {
     return {
       recipes: [],
@@ -170,8 +156,7 @@ export default {
 
         alert('Recipe updated successfully!');
         this.recipeBeingEdited = null;
-        await
-        this.fetchRecipes(); // Refresh the list of recipes
+        await this.fetchRecipes(); // Refresh the list of recipes
       } catch (error) {
         console.error('Error updating recipe:', error);
         alert('An error occurred while updating the recipe.');
@@ -383,7 +368,3 @@ button[type="button"]:hover {
   background-color: #0056b3;
 }
 </style>
-
-
-
-
