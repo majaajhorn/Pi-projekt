@@ -63,9 +63,8 @@
   </div>
 </template>
 
-
 <script>
-import Navbar from '../components/Navbar.vue'; // Adjust the path as per your project structure
+import Navbar from '../components/Navbar.vue';
 import { db } from '@/Firebase/firebase';
 import { collection, getDocs, doc, deleteDoc, updateDoc, setDoc } from 'firebase/firestore';
 import { mapState } from 'vuex';
@@ -80,7 +79,7 @@ export default {
       recipes: [],
       loading: true,
       recipeToDelete: null,
-      recipeBeingEdited: null, // Holds the recipe currently being edited
+      recipeBeingEdited: null,
     };
   },
   computed: {
@@ -90,11 +89,6 @@ export default {
     await this.fetchRecipes();
   },
   methods: {
-    stayOnPage() {
-      // Optionally, you can add some logic here if needed
-      // For now, do nothing to stay on the same page
-    },
-
     async fetchRecipes() {
       try {
         if (!this.currentUser) {
@@ -123,10 +117,10 @@ export default {
         this.loading = false;
       }
     },
-    confirmDelete(recipeId) {
+    async confirmDelete(recipeId) {
       this.recipeToDelete = recipeId;
       if (confirm('Are you sure you want to delete this recipe?')) {
-        this.deleteRecipe();
+        await this.deleteRecipe();
       } else {
         this.recipeToDelete = null;
       }
@@ -158,7 +152,7 @@ export default {
 
         alert('Recipe updated successfully!');
         this.recipeBeingEdited = null;
-        await this.fetchRecipes(); // Refresh the list of recipes
+        await this.fetchRecipes();
       } catch (error) {
         console.error('Error updating recipe:', error);
         alert('An error occurred while updating the recipe.');
@@ -176,23 +170,17 @@ export default {
         console.error('Error adding recipe to favorites:', error);
         alert('An error occurred while adding the recipe to favorites.');
       }
-    },
-    viewRecipeDetails(recipeId) {
-      this.$router.push({ name: 'RecipeDetails', params: { id: recipeId } });
-    },
-    logout() {
-      // Your logout logic here
     }
   }
 };
 </script>
 
-
 <style scoped>
 .my-recipes {
   max-width: 600px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 20px
+  ;
   padding-bottom: 80px; /* Add padding to the bottom */
 }
 
@@ -233,13 +221,9 @@ h2 {
   border-radius: 5px;
 }
 
-.recipe-details {
-  text-align: center;
-}
-
-.recipe-details h3 {
-  font-size: 1.2em;
-  margin: 0;
+.no-decoration {
+  text-decoration: none;
+  color: inherit;
 }
 
 .button-container {
@@ -248,65 +232,27 @@ h2 {
   justify-content: center; /* Center buttons horizontally */
 }
 
-.button-container button {
-  margin-right: 5px;
-}
-
-button {
-  padding: 8px 12px;
+.recipe-button {
+  background: none;
   border: none;
-  background-color: #007BFF;
-  color: #fff;
   cursor: pointer;
-  border-radius: 4px;
+  font-size: 1.2em;
+  margin-top: 10px;
 }
 
-button:hover {
-  background-color: #0056b3;
+.recipe-button .fa-trash-alt {
+  color: black; /* Black color for delete button */
 }
 
-button[type="button"] {
-  background-color: #6c757d;
+.recipe-button .fa-heart {
+  color: red; /* Red color for heart button */
 }
 
-button[type="button"]:hover {
-  background-color: #5a6268;
+.recipe-button:hover .fa-trash-alt {
+  color: black; /* Ensure delete button stays black on hover */
 }
 
-button:disabled {
-  background-color: #6c757d;
-  cursor: not-allowed;
-}
-
-.edit-recipe {
-  margin-top: 20px;
-}
-
-.edit-recipe form {
-  display: flex;
-  flex-direction: column;
-}
-
-.edit-recipe .form-group {
-  margin-bottom: 10px;
-}
-
-.edit-recipe label {
-  font-weight: bold;
-}
-
-.edit-recipe input,
-.edit-recipe textarea,
-.edit-recipe select {
-  padding: 8px;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-  width: 100%;
-}
-
-.no-decoration {
-  text-decoration: none;
-  color: inherit;
+.recipe-button:hover .fa-heart {
+  color: darkred; /* Darker red on hover */
 }
 </style>
-

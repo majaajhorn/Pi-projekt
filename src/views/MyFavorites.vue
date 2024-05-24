@@ -12,6 +12,14 @@
                 <h3>{{ recipe.title }}</h3>
               </router-link>
             </div>
+            <div class="button-container">
+              <button @click="confirmDelete(recipe.id)" class="recipe-button">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+              <button @click="unfavoriteRecipe(recipe.id)" class="recipe-button">
+                <i class="fas fa-heart" style="color: red;"></i>
+              </button>
+            </div>
           </li>
         </ul>
       </div>
@@ -22,7 +30,7 @@
   <script>
   import Navbar from '../components/Navbar.vue';
   import { db } from '@/Firebase/firebase';
-  import { collection, getDocs } from 'firebase/firestore';
+  import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
   import { mapState } from 'vuex';
   
   export default {
@@ -69,6 +77,42 @@
           console.error('Error fetching favorite recipes:', error);
         } finally {
           this.loading = false;
+        }
+      },
+      async confirmDelete(recipeId) {
+        if (confirm('Are you sure you want to delete this recipe?')) {
+          await this.deleteRecipe(recipeId);
+        }
+      },
+      async deleteRecipe(recipeId) {
+        try {
+          // Delete from favorites
+          await deleteDoc(doc(db, 'users', this.currentUser.uid, 'favorites', recipeId));
+          this.favoriteRecipes = this.favoriteRecipes.filter(recipe => recipe.id !== recipeId);
+  
+          // Delete from MyRecipes if it exists
+          const myRecipesSnapshot = await getDocs(collection(db, 'users', this.currentUser.uid, 'recepti'));
+          myRecipesSnapshot.docs.forEach(async doc => {
+            const myRecipeData = doc.data();
+            if (myRecipeData.recipeId === recipeId) {
+              await deleteDoc(doc.ref);
+            }
+          });
+  
+          // Also delete from MyRecipes.vue by emitting an event
+          this.$emit('deleteRecipe', recipeId);
+        } catch (error) {
+          console.error('Error deleting recipe:', error);
+          alert('An error occurred while deleting the recipe.');
+        }
+      },
+      async unfavoriteRecipe(recipeId) {
+        try {
+          await deleteDoc(doc(db, 'users', this.currentUser.uid, 'favorites', recipeId));
+          this.favoriteRecipes = this.favoriteRecipes.filter(recipe => recipe.id !== recipeId);
+        } catch (error) {
+          console.error('Error unfavoriting recipe:', error);
+          alert('An error occurred while unfavoriting the recipe.');
         }
       }
     }
@@ -123,6 +167,36 @@
   .no-decoration {
     text-decoration: none;
     color: inherit;
+  }
+  
+  .button-container {
+    margin-top: auto; /* Push buttons to the bottom */
+    display: flex;
+    justify-content: center; /* Center buttons horizontally */
+  }
+  
+  .recipe-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2em;
+    margin-top: 10px;
+  }
+  
+  .recipe-button .fa-trash-alt {
+    color: black; /* Black color for delete button */
+  }
+  
+  .recipe-button .fa-heart {
+    color: red; /* Red color for heart button */
+  }
+  
+  .recipe-button:hover .fa-trash-alt {
+    color: black; /* Ensure delete button stays black on hover */
+  }
+  
+  .recipe-button:hover .fa-heart {
+    color: darkred; /* Darker red on hover */
   }
   </style>
   
