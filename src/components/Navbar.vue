@@ -9,7 +9,7 @@
       <router-link to="/MainPage" class="nav-item">
         <i class="fas fa-home"></i>
       </router-link>
-      <router-link to="/favorites" class="nav-item">
+      <router-link to="/MyFavorites" class="nav-item">
         <i class="fas fa-heart"></i>
       </router-link>
       <button @click="logout" class="nav-item logout">

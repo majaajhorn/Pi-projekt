@@ -10,6 +10,7 @@ import MyRecipes from '../views/MyRecipes.vue';
 import RecipeDetails from '@/views/RecipeDetails.vue';
 import MyProfile from '../views/MyProfile.vue';
 import SearchButton from '../components/SearchButton.vue';
+import MyFavorites from '../views/MyFavorites.vue';
 
 const routes = [
   {
@@ -51,6 +52,11 @@ const routes = [
     path: '/MyProfile',
     name: 'MyProfile',
     component: MyProfile
+  },
+  {
+    path: '/MyFavorites',
+    name: 'MyFavorites',
+    component: MyFavorites
   }
 ];
 

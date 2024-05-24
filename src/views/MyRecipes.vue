@@ -15,6 +15,7 @@
           <div class="button-container">
             <button @click="editRecipe(recipe)" class="recipe-button"><i class="fas fa-edit"></i></button>
             <button @click="confirmDelete(recipe.id)" class="recipe-button"><i class="fas fa-trash-alt"></i></button>
+            <button @click="makeFavorite(recipe)" class="recipe-button"><i class="fas fa-heart"></i></button>
           </div>
         </li>
       </ul>
@@ -62,10 +63,11 @@
   </div>
 </template>
 
+
 <script>
 import Navbar from '../components/Navbar.vue'; // Adjust the path as per your project structure
 import { db } from '@/Firebase/firebase';
-import { collection, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, deleteDoc, updateDoc, setDoc } from 'firebase/firestore';
 import { mapState } from 'vuex';
 
 export default {
@@ -165,6 +167,16 @@ export default {
     cancelEdit() {
       this.recipeBeingEdited = null;
     },
+    async makeFavorite(recipe) {
+      try {
+        const favoriteRef = doc(db, 'users', this.currentUser.uid, 'favorites', recipe.id);
+        await setDoc(favoriteRef, recipe);
+        alert('Recipe added to favorites!');
+      } catch (error) {
+        console.error('Error adding recipe to favorites:', error);
+        alert('An error occurred while adding the recipe to favorites.');
+      }
+    },
     viewRecipeDetails(recipeId) {
       this.$router.push({ name: 'RecipeDetails', params: { id: recipeId } });
     },
@@ -174,6 +186,7 @@ export default {
   }
 };
 </script>
+
 
 <style scoped>
 .my-recipes {
@@ -260,111 +273,40 @@ button[type="button"]:hover {
   background-color: #5a6268;
 }
 
-.navbar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: #C7F9CC; /* Change background color here */
-  display: flex;
-  justify-content: space-around;
-  padding: 10px 0;
-  box-shadow: 0px -1px 5px rgba(0, 0, 0, 0.1);
-  border-top-left-radius: 20px; /* Rounded corners for the navbar */
-  border-top-right-radius: 20px; /* Rounded corners for the navbar */
-}
-
-.nav-item {
-  color: #333333;
-  font-size: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.nav-item i {
-  cursor: pointer;
-  font-size: 24px; /* Adjust icon size */
-  padding-bottom: 5px; /* Adjust padding between icon and text */
-}
-
-/* Override color for logout icon */
-.nav-item.logout i {
-  color: #333333 !important;
-}
-
-/* Set background color of logout button to transparent */
-.nav-item.logout {
-  background-color: transparent !important;
-}
-
-/* Prevent color change on hover for logout button */
-.nav-item.logout:hover {
-  color: #333333 !important;
-}
-
-/* Remove underline from links */
-.no-decoration {
-  text-decoration: none;
+button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
 }
 
 .edit-recipe {
-  max-width: 400px;
-  margin: 0 auto;
-  background-color: #fff;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
 }
 
-.edit-recipe h2 {
-  text-align: center;
-  margin-bottom: 20px;
+.edit-recipe form {
+  display: flex;
+  flex-direction: column;
 }
 
-.form-group {
-  margin-bottom: 20px;
+.edit-recipe .form-group {
+  margin-bottom: 10px;
 }
 
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
+.edit-recipe label {
+  font-weight: bold;
 }
 
-.form-group input,
-.form-group textarea,
-.form-group select {
-  width: 100%;
+.edit-recipe input,
+.edit-recipe textarea,
+.edit-recipe select {
   padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  width: 100%;
 }
 
-.form-group textarea {
-  resize: vertical;
-}
-
-.form-group select {
-  appearance: none;
-  -webkit-appearance: none;
-  padding: 8px 30px 8px 8px;
-  background-image: url('data:image/svg+xml;utf8,<svg fill="#000000" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M7 10l5 5 5-5z"/></svg>');
-  background-repeat: no-repeat;
-  background-position-x: calc(100% - 10px);
-  background-position-y: 50%;
-}
-
-.form-group button {
-  padding: 10px 20px;
-  border: none;
-  background-color: #007BFF;
-  color: #fff;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.form-group button:hover {
-  background-color: #0056b3;
+.no-decoration {
+  text-decoration: none;
+  color: inherit;
 }
 </style>
+
