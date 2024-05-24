@@ -30,7 +30,7 @@
   <script>
   import Navbar from '../components/Navbar.vue';
   import { db } from '@/Firebase/firebase';
-  import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
+  import { collection, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
   import { mapState } from 'vuex';
   
   export default {
@@ -59,8 +59,8 @@
             return;
           }
   
-          const favoritesSnapshot = await getDocs(collection(db, 'users', this.currentUser.uid, 'favorites'));
-          this.favoriteRecipes = favoritesSnapshot.docs.map(doc => {
+          const recipesSnapshot = await getDocs(collection(db, 'users', this.currentUser.uid, 'recepti'));
+          this.favoriteRecipes = recipesSnapshot.docs.map(doc => {
             const data = doc.data();
             return {
               id: doc.id,
@@ -70,9 +70,10 @@
               prepTime: data.prepTime,
               cookingTime: data.cookingTime,
               methods: data.methods,
-              imageUrl: data.imageUrl || null
+              imageUrl: data.imageUrl || null,
+              isFavorite: data.isFavorite || false
             };
-          });
+          }).filter(recipe => recipe.isFavorite);
         } catch (error) {
           console.error('Error fetching favorite recipes:', error);
         } finally {
@@ -86,21 +87,9 @@
       },
       async deleteRecipe(recipeId) {
         try {
-          // Delete from favorites
-          await deleteDoc(doc(db, 'users', this.currentUser.uid, 'favorites', recipeId));
+          await deleteDoc(doc(db, 'users', this.currentUser.uid, 'recepti', recipeId));
           this.favoriteRecipes = this.favoriteRecipes.filter(recipe => recipe.id !== recipeId);
-  
-          // Delete from MyRecipes if it exists
-          const myRecipesSnapshot = await getDocs(collection(db, 'users', this.currentUser.uid, 'recepti'));
-          myRecipesSnapshot.docs.forEach(async doc => {
-            const myRecipeData = doc.data();
-            if (myRecipeData.recipeId === recipeId) {
-              await deleteDoc(doc.ref);
-            }
-          });
-  
-          // Also delete from MyRecipes.vue by emitting an event
-          this.$emit('deleteRecipe', recipeId);
+          this.$emit('deleteRecipe', recipeId); // Emit event to MyRecipes.vue if necessary
         } catch (error) {
           console.error('Error deleting recipe:', error);
           alert('An error occurred while deleting the recipe.');
@@ -108,11 +97,12 @@
       },
       async unfavoriteRecipe(recipeId) {
         try {
-          await deleteDoc(doc(db, 'users', this.currentUser.uid, 'favorites', recipeId));
+          const recipeRef = doc(db, 'users', this.currentUser.uid, 'recepti', recipeId);
+          await updateDoc(recipeRef, { isFavorite: false });
           this.favoriteRecipes = this.favoriteRecipes.filter(recipe => recipe.id !== recipeId);
         } catch (error) {
-          console.error('Error unfavoriting recipe:', error);
-          alert('An error occurred while unfavoriting the recipe.');
+          console.error('Error updating favorite status:', error);
+          alert('An error occurred while updating the recipe.');
         }
       }
     }
@@ -199,4 +189,3 @@
     color: darkred; /* Darker red on hover */
   }
   </style>
-  

@@ -22,38 +22,7 @@
       <div v-if="recipeBeingEdited" class="edit-recipe">
         <h2>Edit Recipe</h2>
         <form @submit.prevent="saveRecipe">
-          <div class="form-group">
-            <label for="title">Title:</label>
-            <input type="text" id="title" v-model="recipeBeingEdited.title" required>
-          </div>
-          <div class="form-group">
-            <label for="ingredients">Ingredients:</label>
-            <textarea id="ingredients" v-model="recipeBeingEdited.ingredients" rows="4" required></textarea>
-          </div>
-          <div class="form-group">
-            <label for="courses">Courses:</label>
-            <select id="courses" v-model="recipeBeingEdited.courses" required>
-              <option value="">Select a course</option>
-              <option value="breakfast">Breakfast</option>
-              <option value="lunch">Lunch</option>
-              <option value="dinner">Dinner</option>
-              <option value="dessert">Dessert</option>
-              <option value="snack">Snack</option>
-              <option value="side dish">Side Dish</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="prep-time">Prep Time (minutes):</label>
-            <input type="number" id="prep-time" v-model="recipeBeingEdited.prepTime" required>
-          </div>
-          <div class="form-group">
-            <label for="cooking-time">Cooking Time (minutes):</label>
-            <input type="number" id="cooking-time" v-model="recipeBeingEdited.cookingTime" required>
-          </div>
-          <div class="form-group">
-            <label for="methods">Methods:</label>
-            <textarea id="methods" v-model="recipeBeingEdited.methods" rows="4" required></textarea>
-          </div>
+          <!-- Form content -->
           <button type="submit" class="recipe-button">Save Changes</button>
           <button type="button" @click="cancelEdit" class="recipe-button">Cancel</button>
         </form>
@@ -66,7 +35,7 @@
 <script>
 import Navbar from '../components/Navbar.vue';
 import { db } from '@/Firebase/firebase';
-import { collection, getDocs, doc, deleteDoc, updateDoc, setDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { mapState } from 'vuex';
 
 export default {
@@ -108,7 +77,8 @@ export default {
             prepTime: data.prepTime,
             cookingTime: data.cookingTime,
             methods: data.methods,
-            imageUrl: data.imageUrl || null
+            imageUrl: data.imageUrl || null,
+            isFavorite: data.isFavorite || false
           };
         });
       } catch (error) {
@@ -163,12 +133,12 @@ export default {
     },
     async makeFavorite(recipe) {
       try {
-        const favoriteRef = doc(db, 'users', this.currentUser.uid, 'favorites', recipe.id);
-        await setDoc(favoriteRef, recipe);
-        alert('Recipe added to favorites!');
+        const recipeRef = doc(db, 'users', this.currentUser.uid, 'recepti', recipe.id);
+        await updateDoc(recipeRef, { isFavorite: !recipe.isFavorite });
+        recipe.isFavorite = !recipe.isFavorite;
       } catch (error) {
-        console.error('Error adding recipe to favorites:', error);
-        alert('An error occurred while adding the recipe to favorites.');
+        console.error('Error updating favorite status:', error);
+        alert('An error occurred while updating the recipe.');
       }
     }
   }

@@ -49,9 +49,9 @@
 </template>
 
 <script>
-import { db, auth, storage } from '@/Firebase/firebase';
-import { collection, addDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getAuth } from "firebase/auth";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export default {
   name: 'NewRecipe',
@@ -68,47 +68,49 @@ export default {
   },
   methods: {
     handleImageUpload(event) {
-  const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      this.image = e.target.result; // Store the URL of the image
-    };
-    reader.readAsDataURL(file);
-  }
-},
+      const file = event.target.files[0];
+      if (file) {
+        this.image = file; // Store the selected file
+      }
+    },
+    async submitForm() {
+      try {
+        const auth = getAuth();
+        const user = auth.currentUser;
+        if (!user) {
+          console.error('No user logged in.');
+          return;
+        }
 
-async submitForm() {
-  try {
-    const currentUser = auth.currentUser;
-    if (!currentUser) {
-      console.error('No user logged in.');
-      return;
-    }
+        let imageUrl = '';
+        if (this.image) {
+          // Upload the image to Firebase Storage
+          const storage = getStorage();
+          const storageRef = ref(storage, `recipe-images/${user.uid}/${this.image.name}`);
+          await uploadBytes(storageRef, this.image);
+          
+          // Get the download URL of the uploaded image
+          imageUrl = await getDownloadURL(storageRef);
+        }
 
-    let imageUrl = '';
-    if (this.image) {
-      // No need to upload the image, directly use the URL
-      imageUrl = this.image;
-    }
+        // Add recipe data to Firestore, including the image URL
+        await addDoc(collection(getFirestore(), 'users', user.uid, 'recepti'), {
+          title: this.title,
+          ingredients: this.ingredients,
+          courses: this.courses,
+          prepTime: this.prepTime,
+          cookingTime: this.cookingTime,
+          methods: this.methods,
+          imageUrl: imageUrl,
+        });
 
-    await addDoc(collection(db, 'users', currentUser.uid, 'recepti'), {
-      title: this.title,
-      ingredients: this.ingredients,
-      courses: this.courses,
-      prepTime: this.prepTime,
-      cookingTime: this.cookingTime,
-      methods: this.methods,
-      imageUrl: imageUrl // Store the URL in Firestore
-    });
-
-    alert('Recipe created successfully!');
-    this.resetForm();
-  } catch (error) {
-    console.error('Error creating recipe:', error);
-    alert('An error occurred while creating the recipe.');
-  }
-},
+        alert('Recipe created successfully!');
+        this.resetForm();
+      } catch (error) {
+        console.error('Error creating recipe:', error);
+        alert('An error occurred while creating the recipe.');
+      }
+    },
     resetForm() {
       this.title = '';
       this.ingredients = '';
@@ -127,58 +129,57 @@ async submitForm() {
   },
 };
 </script>
-  
-  <style scoped>
-  .new-recipe {
-    max-width: 600px;
-    margin: 0 auto;
-  }
-  
-  .title-container {
-    display: flex;
-    align-items: center; /* Centriranje vertikalno */
-  }
-  
-  .title-container i {
-    margin-right: 10px; /* Razmak između ikone i naslova */
-  }
-  
-  h2 {
-    margin: 0; /* Uklanja podrazumijevani margin */
-  }
-  
-  .form-group {
-    margin-bottom: 20px;
-  }
-  
-  label {
-    display: block;
-    font-weight: bold;
-  }
-  
-  input[type="text"],
-  textarea,
-  select,
-  input[type="number"] {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-  }
-  
-  button {
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  button:hover {
-    background-color: #45a049;
-  }
-  </style>
-  
+
+<style scoped>
+.new-recipe {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.title-container {
+  display: flex;
+  align-items: center; /* Center vertically */
+}
+
+.title-container i {
+  margin-right: 10px; /* Spacing between icon and title */
+}
+
+h2 {
+  margin: 0; /* Remove default margin */
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+}
+
+input[type="text"],
+textarea,
+select,
+input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+</style>

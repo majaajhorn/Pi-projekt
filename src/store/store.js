@@ -4,11 +4,18 @@ import { ref, onMounted } from 'vue'; // Import ref and onMounted from Vue Compo
 const store = createStore({
   state: {
     currentUser: null,
+    recipes: [] // add recipes array to store recipe data
   },
   mutations: {
     setCurrentUser(state, user) {
       state.currentUser = user;
     },
+    setRecipes(state, recipes) {
+      state.recipes = recipes;
+    },
+    deleteRecipe(state, recipeId) {
+      state.recipes = state.recipes.filter(recipe => recipe.id !== recipeId);
+    }
   },
   actions: {
     setCurrentUser({ commit }, user) {
