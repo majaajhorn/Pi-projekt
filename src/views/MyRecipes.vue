@@ -215,7 +215,7 @@ h2 {
 }
 
 .recipe-button .fa-heart {
-  color: red; /* Red color for heart button */
+  color: black; /* Red color for heart button */
 }
 
 .recipe-button:hover .fa-trash-alt {
