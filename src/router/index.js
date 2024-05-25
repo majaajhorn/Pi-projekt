@@ -11,6 +11,7 @@ import RecipeDetails from '@/views/RecipeDetails.vue';
 import MyProfile from '../views/MyProfile.vue';
 import SearchButton from '../components/SearchButton.vue';
 import MyFavorites from '../views/MyFavorites.vue';
+import AllRecipes from '../views/AllRecipes.vue';
 
 const routes = [
   {
@@ -43,7 +44,7 @@ const routes = [
     name: 'MyRecipes',
     component: MyRecipes
   },
-  {
+  { //
     path: '/RecipeDetails/:id',
     name: 'RecipeDetails',
     component: RecipeDetails
@@ -57,6 +58,11 @@ const routes = [
     path: '/MyFavorites',
     name: 'MyFavorites',
     component: MyFavorites
+  },
+  {
+    path: '/AllRecipes',
+    name: 'AllRecipes',
+    component: AllRecipes
   }
 ];
 
