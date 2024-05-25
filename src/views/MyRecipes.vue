@@ -23,8 +23,44 @@
         <h2>Edit Recipe</h2>
         <form @submit.prevent="saveRecipe">
           <!-- Form content -->
-          <button type="submit" class="recipe-button">Save Changes</button>
-          <button type="button" @click="cancelEdit" class="recipe-button">Cancel</button>
+          <div class="form-group">
+            <label for="title">Title:</label>
+            <input type="text" id="title" v-model="recipeBeingEdited.title" required>
+          </div>
+          <div class="form-group">
+            <label for="ingredients">Ingredients:</label>
+            <textarea id="ingredients" v-model="recipeBeingEdited.ingredients" rows="4" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="courses">Courses:</label>
+            <select id="courses" v-model="recipeBeingEdited.courses" required>
+              <option value="">Select a course</option>
+              <option value="breakfast">Breakfast</option>
+              <option value="lunch">Lunch</option>
+              <option value="dinner">Dinner</option>
+              <option value="dessert">Dessert</option>
+              <option value="snack">Snack</option>
+              <option value="side dish">Side Dish</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="prep-time">Prep Time (minutes):</label>
+            <input type="number" id="prep-time" v-model="recipeBeingEdited.prepTime" required>
+          </div>
+          <div class="form-group">
+            <label for="cooking-time">Cooking Time (minutes):</label>
+            <input type="number" id="cooking-time" v-model="recipeBeingEdited.cookingTime" required>
+          </div>
+          <div class="form-group">
+            <label for="methods">Methods:</label>
+            <textarea id="methods" v-model="recipeBeingEdited.methods" rows="4" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="image">Recipe Image:</label>
+            <input type="file" id="image" @change="onFileChange" accept="image/*">
+        </div>
+          <button type="submit" class="recipe-button save-button">Save Changes</button>
+          <button type="button" @click="cancelEdit" class="recipe-button cancel-button">Cancel</button>
         </form>
       </div>
     </div>
@@ -110,6 +146,7 @@ export default {
     },
     async saveRecipe() {
       try {
+        console.log('Recipe being saved:', this.recipeBeingEdited);
         const recipeRef = doc(db, 'users', this.currentUser.uid, 'recepti', this.recipeBeingEdited.id);
         await updateDoc(recipeRef, {
           title: this.recipeBeingEdited.title,
@@ -118,6 +155,7 @@ export default {
           prepTime: this.recipeBeingEdited.prepTime,
           cookingTime: this.recipeBeingEdited.cookingTime,
           methods: this.recipeBeingEdited.methods,
+          imageUrl: this.recipeBeingEdited.imageUrl
         });
 
         alert('Recipe updated successfully!');
@@ -140,7 +178,19 @@ export default {
         console.error('Error updating favorite status:', error);
         alert('An error occurred while updating the recipe.');
       }
+    },
+    onFileChange(event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.recipeBeingEdited.imageUrl = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      this.recipeBeingEdited.imageUrl = null;
     }
+  }
   }
 };
 </script>
@@ -149,8 +199,7 @@ export default {
 .my-recipes {
   max-width: 600px;
   margin: 0 auto;
-  padding: 20px
-  ;
+  padding: 20px;
   padding-bottom: 80px; /* Add padding to the bottom */
 }
 
@@ -224,5 +273,78 @@ h2 {
 
 .recipe-button:hover .fa-heart {
   color: darkred; /* Darker red on hover */
+}
+
+.edit-recipe {
+  max-width: 400px;
+  margin: 0 auto;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.edit-recipe h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.form-group button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #007BFF;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 20px; /* Rounded corners */
+  transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.form-group button:hover {
+  background-color: #0056b3;
+}
+
+.form-group select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 8px 30px 8px 8px;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="#000000" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><path d="M7 10l5 5 5-5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position-x: calc(100% - 10px);
+  background-position-y: 50%;
+}
+
+.save-button {
+  background-color: #007BFF; 
+  border-radius: 5px;
+  padding: 10px 20px;
+  margin-right: 7em;
+}
+
+.cancel-button {
+  background-color: #dc3545; /* Red */
+  border-radius: 5px;
+  padding: 10px 20px;
 }
 </style>

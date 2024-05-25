@@ -11,7 +11,7 @@
       <p><strong>Cooking Time:</strong> {{ recipe.cookingTime }} minutes</p>
       <p><strong>Methods:</strong></p>
       <p>{{ recipe.methods }}</p>
-      <!-- ovo ne ispiše-->
+      <!---->
       <p><strong>Created by:</strong> {{ userEmail }}</p>
   
       <button class="start-cooking-btn" @click="startCooking" v-if="!cooking">Start Cooking</button>
