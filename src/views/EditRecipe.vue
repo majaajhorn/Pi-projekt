@@ -35,8 +35,12 @@
         <textarea id="methods" v-model="recipe.methods" rows="4" required></textarea>
       </div>
       <div class="form-group">
-        <label for="image">Image:</label>
-        <input type="file" id="image" @change="handleImageUpload" accept="image/*">
+        <label for="image">Image URL:</label>
+        <input type="url" id="image" v-model="recipe.imageUrl">
+      </div>
+      <div class="form-group">
+        <label for="new-image">Upload New Image:</label>
+        <input type="file" id="new-image" @change="handleImageUpload" accept="image/*">
       </div>
       <button type="submit">Save Changes</button>
     </form>
@@ -44,53 +48,63 @@
 </template>
 
 <script>
-import { db } from '@/Firebase/firebase';
-import { doc, updateDoc } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-
+import { getAuth } from "firebase/auth";
+import { getFirestore, doc, updateDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export default {
   name: 'EditRecipe',
   data() {
     return {
       recipe: {
+        id: '',
         title: '',
         ingredients: '',
         courses: '',
         prepTime: 0,
         cookingTime: 0,
         methods: '',
-        image: null, // New property for the image
+        imageUrl: '', // Using URL directly
       },
+      newImage: null,
     };
   },
   created() {
     if (this.$route.params.recipe) {
       this.recipe = this.$route.params.recipe;
     } else {
-      // Handle case where route params are not available
       console.error('Recipe data not found in route parameters.');
     }
   },
   methods: {
+    handleImageUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        this.newImage = file; // Store the selected file
+      }
+    },
     async submitForm() {
       try {
-        const recipeRef = doc(db, 'users', this.$store.state.currentUser.uid, 'recepti', this.recipe.id);
-        let imageUrl = this.recipe.imageUrl || ''; // Initialize with existing image URL
-        
-        // If a new image is uploaded, update the image in Firebase Storage
-        if (this.recipe.image) {
-          const storage = getStorage();
-          const storageRef = ref(storage, `recipe-images/${this.$store.state.currentUser.uid}/${this.recipe.image.name}`);
-          await uploadBytes(storageRef, this.recipe.image);
+        const auth = getAuth();
+        const user = auth.currentUser;
+        if (!user) {
+          console.error('No user logged in.');
+          return;
+        }
 
-          // Log the size of the uploaded image after compression
-      console.log("Uploaded image size after compression:", this.recipe.image.size, "bytes");
-      
+        let imageUrl = this.recipe.imageUrl;
+        if (this.newImage) {
+          // Upload the new image to Firebase Storage
+          const storage = getStorage();
+          const storageRef = ref(storage, `recipe-images/${user.uid}/${this.newImage.name}`);
+          await uploadBytes(storageRef, this.newImage);
+
+          // Get the download URL of the uploaded image
           imageUrl = await getDownloadURL(storageRef);
         }
 
         // Update recipe data in Firestore
+        const recipeRef = doc(getFirestore(), 'users', user.uid, 'recepti', this.recipe.id);
         await updateDoc(recipeRef, {
           title: this.recipe.title,
           ingredients: this.recipe.ingredients,
@@ -98,7 +112,7 @@ export default {
           prepTime: this.recipe.prepTime,
           cookingTime: this.recipe.cookingTime,
           methods: this.recipe.methods,
-          imageUrl: imageUrl,
+          imageUrl: imageUrl, // Save the image URL directly
         });
 
         alert('Recipe updated successfully!');
@@ -108,99 +122,13 @@ export default {
         alert('An error occurred while updating the recipe.');
       }
     },
-    handleImageUpload(event) {
-      const file = event.target.files[0];
-      if (file) {
-        console.log("Uploaded image size:", file.size, "bytes");
-        this.recipe.image = file; // Store the selected file
-      }
-    },
   },
 };
 </script>
 
 <style scoped>
-.my-recipes {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  padding-bottom: 80px; /* Add padding to the bottom */
-}
-
-h2 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.recipe-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  list-style: none;
-  padding-left: 0;
-}
-
-.recipe-item {
-  width: calc(33.33% - 20px); /* Adjust width for responsiveness */
-  margin-bottom: 20px;
-  background-color: #C7F9CC;
-  border-radius: 10px;
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Center content horizontally */
-  text-align: center; /* Center text */
-}
-
-.recipe-image-container {
-  width: 150px;
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: center; /* Center image horizontally */
-}
-
-.recipe-image {
-  width: 100%;
-  border-radius: 5px;
-}
-
-.no-decoration {
-  text-decoration: none;
-  color: inherit;
-}
-
-.button-container {
-  margin-top: auto; /* Push buttons to the bottom */
-  display: flex;
-  justify-content: center; /* Center buttons horizontally */
-}
-
-.recipe-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.2em;
-  margin-top: 10px;
-}
-
-.recipe-button .fa-trash-alt {
-  color: black; /* Black color for delete button */
-}
-
-.recipe-button .fa-heart {
-  color: black; /* Red color for heart button */
-}
-
-.recipe-button:hover .fa-trash-alt {
-  color: black; /* Ensure delete button stays black on hover */
-}
-
-.recipe-button:hover .fa-heart {
-  color: darkred; /* Darker red on hover */
-}
-
 .edit-recipe {
-  max-width: 400px;
+  max-width: 600px;
   margin: 0 auto;
   background-color: #fff;
   border-radius: 10px;
@@ -241,8 +169,8 @@ h2 {
   background-color: #007BFF;
   color: #fff;
   cursor: pointer;
-  border-radius: 20px; /* Rounded corners */
-  transition: background-color 0.3s ease; /* Smooth transition */
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 
 .form-group button:hover {
@@ -257,18 +185,5 @@ h2 {
   background-repeat: no-repeat;
   background-position-x: calc(100% - 10px);
   background-position-y: 50%;
-}
-
-.save-button {
-  background-color: #007BFF; 
-  border-radius: 5px;
-  padding: 10px 20px;
-  margin-right: 7em;
-}
-
-.cancel-button {
-  background-color: #dc3545; /* Red */
-  border-radius: 5px;
-  padding: 10px 20px;
 }
 </style>

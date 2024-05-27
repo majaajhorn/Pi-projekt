@@ -58,7 +58,7 @@
           <div class="form-group">
             <label for="image">Recipe Image:</label>
             <input type="file" id="image" @change="onFileChange" accept="image/*">
-        </div>
+          </div>
           <button type="submit" class="recipe-button save-button">Save Changes</button>
           <button type="button" @click="cancelEdit" class="recipe-button cancel-button">Cancel</button>
         </form>
@@ -72,6 +72,7 @@
 import Navbar from '../components/Navbar.vue';
 import { db } from '@/Firebase/firebase';
 import { collection, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { mapState } from 'vuex';
 
 export default {
@@ -85,6 +86,7 @@ export default {
       loading: true,
       recipeToDelete: null,
       recipeBeingEdited: null,
+      newImageFile: null,
     };
   },
   computed: {
@@ -143,10 +145,24 @@ export default {
     },
     editRecipe(recipe) {
       this.recipeBeingEdited = { ...recipe };
+      this.newImageFile = null; // Reset the new image file
     },
     async saveRecipe() {
       try {
         console.log('Recipe being saved:', this.recipeBeingEdited);
+
+        let imageUrl = this.recipeBeingEdited.imageUrl;
+
+        if (this.newImageFile) {
+          // Upload the new image to Firebase Storage
+          const storage = getStorage();
+          const storageRef = ref(storage, `recipe-images/${this.currentUser.uid}/${this.newImageFile.name}`);
+          await uploadBytes(storageRef, this.newImageFile);
+
+          // Get the download URL of the uploaded image
+          imageUrl = await getDownloadURL(storageRef);
+        }
+
         const recipeRef = doc(db, 'users', this.currentUser.uid, 'recepti', this.recipeBeingEdited.id);
         await updateDoc(recipeRef, {
           title: this.recipeBeingEdited.title,
@@ -155,7 +171,7 @@ export default {
           prepTime: this.recipeBeingEdited.prepTime,
           cookingTime: this.recipeBeingEdited.cookingTime,
           methods: this.recipeBeingEdited.methods,
-          imageUrl: this.recipeBeingEdited.imageUrl
+          imageUrl: imageUrl
         });
 
         alert('Recipe updated successfully!');
@@ -180,17 +196,11 @@ export default {
       }
     },
     onFileChange(event) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        this.recipeBeingEdited.imageUrl = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    } else {
-      this.recipeBeingEdited.imageUrl = null;
+      const file = event.target.files[0];
+      if (file) {
+        this.newImageFile = file;
+      }
     }
-  }
   }
 };
 </script>
