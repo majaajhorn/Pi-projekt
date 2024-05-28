@@ -7,10 +7,14 @@
       <ul class="recipe-list">
         <li v-for="recipe in recipes" :key="recipe.id" class="recipe-item">
           <div class="recipe-image-container">
-            <router-link :to="{ name: 'RecipeDetails', params: { id: recipe.id } }" class="no-decoration">
+            <router-link :to="{ name: 'RecipeDetails', params: { userId: recipe.userId, id: recipe.id } }">
+           <!--  <router-link :to="{ name: 'RecipeDetails', params: { id: recipe.id } }" class="no-decoration"> -->
+            <!-- <router-link :to="{ name: 'RecipeDetails', params: { userId: recipe.userId, id: recipe.id } }">-->
+              
               <img :src="recipe.imageUrl" alt="Recipe Image" class="recipe-image" v-if="recipe.imageUrl" />
               <h3>{{ recipe.title }}</h3>
-            </router-link>
+              </router-link>
+      
           </div>
           <div class="button-container">
             <button @click="editRecipe(recipe)" class="recipe-button"><i class="fas fa-edit"></i></button>
@@ -71,8 +75,9 @@
 <script>
 import Navbar from '../components/Navbar.vue';
 import { db } from '@/Firebase/firebase';
-import { collection, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { getAuth } from 'firebase/auth';
 import { mapState } from 'vuex';
 
 export default {
@@ -82,7 +87,7 @@ export default {
   },
   data() {
     return {
-      recipes: [],
+      recipes: [], // recipes : []
       loading: true,
       recipeToDelete: null,
       recipeBeingEdited: null,
@@ -96,6 +101,7 @@ export default {
     await this.fetchRecipes();
   },
   methods: {
+    /*
     async fetchRecipes() {
       try {
         if (!this.currentUser) {
@@ -103,8 +109,8 @@ export default {
           this.loading = false;
           return;
         }
-
-        const recipesSnapshot = await getDocs(collection(db, 'users', this.currentUser.uid, 'recepti'));
+        const userId = userDoc.id;
+        const recipesSnapshot = await getDocs(collection(db, 'users', userId, 'recepti'));
         this.recipes = recipesSnapshot.docs.map(doc => {
           const data = doc.data();
           return {
@@ -125,6 +131,36 @@ export default {
         this.loading = false;
       }
     },
+    */
+    async  fetchRecipes() {
+  try {
+    const db = getFirestore();
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+      throw new Error('No user is currently logged in');
+    }
+
+    const userId = currentUser.uid;
+    const userEmail = currentUser.email;
+    const receptiCollection = collection(db, `users/${userId}/recepti`);
+    const receptiSnapshot = await getDocs(receptiCollection);
+
+    const userRecipes = receptiSnapshot.docs.map(doc => ({
+      userId,
+      userEmail,
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    this.recipes = userRecipes;
+  } catch (error) {
+    console.error('Error fetching recipes:', error);
+  } finally {
+    this.loading = false;
+  }
+},
     async confirmDelete(recipeId) {
       this.recipeToDelete = recipeId;
       if (confirm('Are you sure you want to delete this recipe?')) {

@@ -12,15 +12,20 @@
           <!-- Add more fields as needed -->
         </div>
       </div>
+      <Navbar />
     </div>
   </template>
   
   <script>
   import { ref, onMounted } from 'vue';
   import { getFirestore, collection, getDocs } from 'firebase/firestore';
+  import Navbar from '../components/Navbar.vue';
   
   export default {
     name: 'AllRecipes',
+    components: {
+    Navbar
+  },
     setup() {
       const recipes = ref([]);
       const loading = ref(true);

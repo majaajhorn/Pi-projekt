@@ -3,7 +3,7 @@
     <router-link to="/MyProfile" class="nav-item">
       <i class="fas fa-user"></i>
     </router-link>
-    <router-link to="/MyRecipes" class="nav-item">
+    <router-link to="/:userId/MyRecipes" class="nav-item"> <!-- THIS -->
       <i class="fas fa-utensils"></i>
     </router-link>
     <router-link to="/MainPage" class="nav-item">
@@ -12,7 +12,7 @@
     <router-link to="/AllRecipes" class="nav-item">
       <i class="fa-solid fa-plate-wheat"></i>
     </router-link>
-    <router-link to="/MyFavorites" class="nav-item">
+    <router-link to="/:userId/MyFavorites" class="nav-item">
       <i class="fas fa-heart"></i>
     </router-link>
     <button @click="logout" class="nav-item logout">

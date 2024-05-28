@@ -40,12 +40,15 @@ const routes = [
     component: NewRecipe
   },
   {
-    path: '/MyRecipes',
+    path: '/:userId/MyRecipes',
     name: 'MyRecipes',
     component: MyRecipes
   },
   { //
-    path: '/RecipeDetails/:id',
+    path: '/RecipeDetails/:userId/:id',
+    //path:'/RecipeDetails/:userId/:id',
+    //path: '/:userId/MyRecipes/:recipeId/RecipeDetails',
+
     name: 'RecipeDetails',
     component: RecipeDetails
   },
@@ -55,7 +58,7 @@ const routes = [
     component: MyProfile
   },
   {
-    path: '/MyFavorites',
+    path: '/:userId/MyFavorites',
     name: 'MyFavorites',
     component: MyFavorites
   },
