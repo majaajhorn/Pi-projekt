@@ -46,9 +46,6 @@ const routes = [
   },
   { //
     path: '/RecipeDetails/:userId/:id',
-    //path:'/RecipeDetails/:userId/:id',
-    //path: '/:userId/MyRecipes/:recipeId/RecipeDetails',
-
     name: 'RecipeDetails',
     component: RecipeDetails
   },
@@ -75,12 +72,11 @@ const router = createRouter({
 });
 
 const app = createApp({
-  // Your root component, if needed. Example:
-  // render: h => h(App)
+  
 });
 
-app.component('SearchButton', SearchButton); // Register SearchButton globally
-app.use(router); // Use the router
-app.mount('#app'); // Mount the app to the DOM element with id "app"
+app.component('SearchButton', SearchButton); 
+app.use(router); 
+app.mount('#app'); 
 
 export default router;

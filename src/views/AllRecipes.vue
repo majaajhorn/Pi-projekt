@@ -9,7 +9,7 @@
           </router-link>
           <p>{{ recipe.description }}</p>
           <p><strong>Created by:</strong> {{ recipe.userEmail }}</p>
-          <!-- Add more fields as needed -->
+         
         </div>
       </div>
       <Navbar />
