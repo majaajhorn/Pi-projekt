@@ -20,6 +20,38 @@
     </div>
     <div v-if="showAlert" class="alert">Cooking time finished! Enjoy your meal!</div>
 
+    <!-- Review button -->
+    <button class="rate-btn" @click="toggleReviewForm">Rate</button>
+
+    <!-- Review form -->
+    <div v-if="showReviewForm">
+      <form @submit.prevent="submitReview">
+        <label for="review-description">Review Description:</label>
+        <textarea id="review-description" v-model="reviewDescription"></textarea>
+        <label for="star-rating">Star Rating:</label>
+        <select id="star-rating" v-model="starRating">
+          <option value="1">1 star</option>
+          <option value="2">2 stars</option>
+          <option value="3">3 stars</option>
+          <option value="4">4 stars</option>
+          <option value="5">5 stars</option>
+        </select>
+        <button type="submit">Submit Review</button>
+      </form>
+    </div>
+
+    <!-- Reviews -->
+    <div v-if="reviews.length > 0">
+      <h3>Reviews:</h3>
+      <ul>
+        <li v-for="review in reviews" :key="review.id">
+  <p>{{ review.description }}</p>
+  <p>Rating: {{ review.rating }}</p>
+  <p>By: {{ review.userEmail }}</p> <!-- Display user's email -->
+</li> 
+      </ul>
+    </div>
+
     <!-- Audio element for playing alarm sound -->
     <audio ref="alarmSound" :src="alarmSoundSrc"></audio>
   </div>
@@ -30,8 +62,8 @@
 </template>
 
 <script>
-import { db } from '@/Firebase/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { db, auth } from '@/Firebase/firebase'; // Assuming you have auth exported from Firebase
+import { doc, getDoc, collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import Navbar from '../components/Navbar.vue';
 import alarmSound from '../assets/AlarmSound.mp3.mp3';
 
@@ -51,17 +83,33 @@ export default {
         seconds: 0,
       },
       alarmSoundSrc: alarmSound, // Use the imported alarm sound
+      showReviewForm: false,
+      reviewDescription: '',
+      starRating: 1,
+      reviews: [],
+      currentUserEmail: null, // Store current user's email
     };
   },
   async created() {
     await this.fetchRecipeDetails();
+    await this.fetchReviews();
+    this.getCurrentUserEmail(); // Fetch current user's email when component is created
   },
   methods: {
+    async getCurrentUserEmail() {
+      try {
+        const user = auth.currentUser; // Get currently logged-in user
+        if (user) {
+          // If user is logged in, fetch their email
+          this.currentUserEmail = user.email;
+        }
+      } catch (error) {
+        console.error('Error fetching current user email:', error);
+      }
+    },
     async fetchRecipeDetails() {
       try {
-        console.log(this.$route.params)
         const recipeId = this.$route.params.id;
-        console.log(`users/${this.$route.params.userId}/recepti/${recipeId}`)
         const recipeDoc = await getDoc(
           doc(db, `users/${this.$route.params.userId}/recepti/${recipeId}`)
         );
@@ -76,7 +124,7 @@ export default {
         this.loading = false;
       }
     },
-    startCooking() {
+    async startCooking() {
       this.cooking = true;
       const totalTime = this.recipe.cookingTime * 60; // Convert cooking time to seconds
       let timeLeft = totalTime;
@@ -105,6 +153,61 @@ export default {
         });
       } catch (error) {
         console.error('Error playing alarm sound:', error);
+      }
+    },
+    toggleReviewForm() {
+      this.showReviewForm = !this.showReviewForm;
+    },
+    async submitReview() {
+      try {
+        const recipeId = this.$route.params.id;
+        const userId = this.$route.params.userId;
+
+        // Add review to Firebase
+        await addDoc(collection(db, `users/${userId}/recepti/${recipeId}/reviews`), {
+          description: this.reviewDescription,
+          rating: this.starRating,
+          userEmail: this.currentUserEmail, // Use current user's email
+          timestamp: new Date(),
+        });
+
+        // Reset review form fields
+        this.reviewDescription = '';
+        this.starRating = 1;
+
+        // Fetch updated reviews
+        await this.fetchReviews();
+      } catch (error) {
+        console.error('Error submitting review:', error);
+      }
+    },
+    async fetchReviews() {
+      try {
+        const recipeId = this.$route.params.id;
+        const userId = this.$route.params.userId;
+
+        const q = query(
+          collection(db, `users/${userId}/recepti/${recipeId}/reviews`)
+        );
+        const querySnapshot = await getDocs(q);
+        const reviewsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        // Update the current user's email for existing reviews
+        for (const review of reviewsData) {
+          if (review.userId === auth.currentUser.uid) {
+            review.userEmail = this.currentUserEmail;
+          } else {
+            // Fetch user email for other reviews
+            const userDoc = await getDoc(doc(db, `users/${review.userId}`));
+            if (userDoc.exists()) {
+              review.userEmail = userDoc.data().email;
+            }
+          }
+        }
+
+        this.reviews = reviewsData;
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
       }
     },
   },
