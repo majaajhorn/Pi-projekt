@@ -24,21 +24,23 @@
     <button class="rate-btn" @click="toggleReviewForm">Rate</button>
 
     <!-- Review form -->
-    <div v-if="showReviewForm">
-      <form @submit.prevent="submitReview">
-        <label for="review-description">Review Description:</label>
-        <textarea id="review-description" v-model="reviewDescription"></textarea>
-        <label for="star-rating">Star Rating:</label>
-        <select id="star-rating" v-model="starRating">
-          <option value="1">1 star</option>
-          <option value="2">2 stars</option>
-          <option value="3">3 stars</option>
-          <option value="4">4 stars</option>
-          <option value="5">5 stars</option>
-        </select>
-        <button type="submit">Submit Review</button>
-      </form>
-    </div>
+    <!-- <div v-if="showReviewForm && currentUserEmail !== recipeCreatorEmail"> -->
+      <div v-if="showReviewForm">
+  <form @submit.prevent="submitReview">
+    <label for="review-description">Review Description:</label>
+    <textarea id="review-description" v-model="reviewDescription"></textarea>
+    <label for="star-rating">Star Rating:</label>
+    <select id="star-rating" v-model="starRating">
+      <option value="1">1 star</option>
+      <option value="2">2 stars</option>
+      <option value="3">3 stars</option>
+      <option value="4">4 stars</option>
+      <option value="5">5 stars</option>
+    </select>
+    <button type="submit">Submit Review</button>
+  </form>
+</div>
+
 
     <!-- Reviews -->
     <div v-if="reviews.length > 0">
@@ -108,22 +110,27 @@ export default {
       }
     },
     async fetchRecipeDetails() {
-      try {
-        const recipeId = this.$route.params.id;
-        const recipeDoc = await getDoc(
-          doc(db, `users/${this.$route.params.userId}/recepti/${recipeId}`)
-        );
-        if (recipeDoc.exists()) {
-          this.recipe = recipeDoc.data();
-        } else {
-          console.error('No such recipe!');
-        }
-      } catch (error) {
-        console.error('Error fetching recipe details:', error);
-      } finally {
-        this.loading = false;
+  try {
+    const recipeId = this.$route.params.id;
+    const userId = this.$route.params.userId;
+    const recipeDoc = await getDoc(doc(db, `users/${userId}/recepti/${recipeId}`));
+    if (recipeDoc.exists()) {
+      this.recipe = recipeDoc.data();
+      // Fetch the creator's email
+      const userDoc = await getDoc(doc(db, `users/${userId}`));
+      if (userDoc.exists()) {
+        this.recipeCreatorEmail = userDoc.data().email;
       }
-    },
+    } else {
+      console.error('No such recipe!');
+    }
+  } catch (error) {
+    console.error('Error fetching recipe details:', error);
+  } finally {
+    this.loading = false;
+  }
+},
+
     async startCooking() {
       this.cooking = true;
       const totalTime = this.recipe.cookingTime * 60; // Convert cooking time to seconds
@@ -156,12 +163,23 @@ export default {
       }
     },
     toggleReviewForm() {
+      
+      if (this.currentUserEmail === this.recipeCreatorEmail) {
+      // Display an alert
+      alert("You can't review your own recipe.");
+      return; // Stop further execution
+      }
+      else {
       this.showReviewForm = !this.showReviewForm;
+      }
     },
     async submitReview() {
       try {
         const recipeId = this.$route.params.id;
         const userId = this.$route.params.userId;
+
+        
+
 
         // Add review to Firebase
         await addDoc(collection(db, `users/${userId}/recepti/${recipeId}/reviews`), {
