@@ -7,15 +7,17 @@
       </button>
     </div>
     <div v-if="showFilterPanel" class="filter-panel">
-      <input v-model="filterByIngredients" @input="pretrazi" placeholder="Filter by ingredients..." />
-      <input v-model="filterByCourses" @input="pretrazi" placeholder="Filter by courses..." />
-      <button @click="applyFilters">Apply Filters</button>
-      <button @click="resetFilters">Reset Filters</button>
+      <input v-model="filterByIngredients" @input="pretrazi" placeholder="Ingredients" />
+      <input v-model="filterByCourses" @input="pretrazi" placeholder="Courses" />
+      <div class="filter-buttons">
+        <button @click="applyFilters" class="apply-button">Apply</button>
+        <button @click="resetFilters" class="clear-button">Clear</button>
+      </div>
     </div>
     <div v-if="loading" class="loading">Loading recipes...</div>
     <ul v-if="!loading && filteredRecipes.length > 0" class="recipe-list">
       <li v-for="recipe in filteredRecipes" :key="recipe.id" class="recipe-item">
-        <router-link :to="{ name: 'RecipeDetails', params: { userId: recipe.userId, id: recipe.id } }">
+        <router-link :to="{ name: 'RecipeDetails', params: { userId: recipe.userId, id: recipe.id } }" class="recipe-link">
           {{ recipe.title }}
         </router-link>
       </li>
@@ -25,7 +27,7 @@
 </template>
 
 <script>
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
 
 export default {
@@ -60,9 +62,16 @@ export default {
       recipes.value = allRecipes;
       loading.value = false;
     };
-/*
+
     const filterRecipes = () => {
       let filtered = recipes.value;
+
+      // Check if any filtering conditions are present
+      if (!filterByIngredients.value && !filterByCourses.value && !searchTerm.value) {
+        // No filtering conditions, display "No recipes found"
+        filteredRecipes.value = [];
+        return;
+      }
 
       // Apply filter by ingredients
       if (filterByIngredients.value) {
@@ -86,59 +95,25 @@ export default {
         filtered = filtered.filter(recipe =>
           recipe.title.toLowerCase().includes(searchTermLower)
         );
+      } else {
+        filteredRecipes.value = [];
       }
 
+      // Set the filtered recipes
       filteredRecipes.value = filtered;
+
+      // Check if any recipes are found after filtering
+      if (filtered.length === 0) {
+        // No recipes found, display "No recipes found"
+        filteredRecipes.value = [];
+      }
     };
-*/
-const filterRecipes = () => {
-  let filtered = recipes.value;
 
-  // Check if any filtering conditions are present
-  if (!filterByIngredients.value && !filterByCourses.value && !searchTerm.value) {
-    // No filtering conditions, display "No recipes found"
-    filteredRecipes.value = [];
-    return;
-  }
-
-  // Apply filter by ingredients
-  if (filterByIngredients.value) {
-    const filterIngredient = filterByIngredients.value.toLowerCase();
-    filtered = filtered.filter(recipe =>
-      recipe.ingredients.toLowerCase().includes(filterIngredient)
-    );
-  }
-
-  // Apply filter by courses
-  if (filterByCourses.value) {
-    const filterCourse = filterByCourses.value.toLowerCase();
-    filtered = filtered.filter(recipe =>
-      recipe.courses.toLowerCase().includes(filterCourse)
-    );
-  }
-
-  // Apply search term filter
-  if (searchTerm.value) {
-    const searchTermLower = searchTerm.value.toLowerCase();
-    filtered = filtered.filter(recipe =>
-      recipe.title.toLowerCase().includes(searchTermLower)
-    );
-  }
-
-  // Set the filtered recipes
-  filteredRecipes.value = filtered;
-
-  // Check if any recipes are found after filtering
-  if (filtered.length === 0) {
-    // No recipes found, display "No recipes found"
-    filteredRecipes.value = [];
-  }
-};
     const pretrazi = async () => {
       if (loading.value) {
         await fetchRecipes();
       }
-      
+
       filterRecipes();
     };
 
@@ -175,7 +150,6 @@ const filterRecipes = () => {
 </script>
 
 <style scoped>
-@import '../../node_modules/@fortawesome/fontawesome-free/css/all.css';
 .search-container {
   display: flex;
   flex-direction: column;
@@ -197,6 +171,7 @@ const filterRecipes = () => {
   border-radius: 5px;
   margin-right: 10px;
   width: 200px;
+  color: black; /* Change text color to black */
 }
 
 .filter-button {
@@ -209,6 +184,8 @@ const filterRecipes = () => {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  background-color: #80ED99;
+  color: white;
 }
 
 .filter-button i {
@@ -216,31 +193,62 @@ const filterRecipes = () => {
 }
 
 .filter-button:hover {
-  background-color: #f0f0f0;
+  background-color: #66cc80;
 }
 
 .filter-panel {
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px;
+  background-color: #ccffdd;
+  border: 1px solid #80ED99;
+  border-radius: 15px;
+  padding: 20px;
   margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 400px; /* Adjust the width as needed */
 }
 
 .filter-panel input {
-  margin-right: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 300px;
+  background-color: #80ED99;
+  color: black; /* Change text color to black */
 }
 
-.filter-panel button {
-  margin-right: 10px;
+.filter-buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 10px;
 }
 
-.loading,
-.no-recipes {
-  margin-top: 20px;
-  font-size: 18px;
-  color: #666;
+.filter-buttons button {
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 48%;
+  color: black;
+  font-weight: bold;
+}
+
+.filter-buttons .apply-button {
+  background-color: #80ED99;
+}
+
+.filter-buttons .clear-button {
+  background-color: #80ED99;
+}
+
+.filter-buttons button:hover {
+  background-color: #66cc80;
 }
 
 .recipe-list {
@@ -256,4 +264,14 @@ const filterRecipes = () => {
   border-radius: 5px;
   margin-bottom: 10px;
 }
+
+.recipe-link {
+  color: #333; /* Change to your preferred text color */
+  text-decoration: none;
+}
+
+.recipe-link:hover {
+  text-decoration: underline;
+}
 </style>
+
