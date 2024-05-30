@@ -14,43 +14,53 @@
     <!---->
     <p><strong>Created by:</strong> {{ userEmail }}</p>
 
-    <button class="start-cooking-btn" @click="startCooking" v-if="!cooking">Start Cooking</button>
-    <div v-else class="clock">
-      <span>{{ timeLeft.minutes }}</span>:<span>{{ timeLeft.seconds }}</span>
-    </div>
-    <div v-if="showAlert" class="alert">Cooking time finished! Enjoy your meal!</div>
+    <div class="button-container">
+      <button class="start-cooking-btn" @click="startCooking" v-if="!cooking">Start Cooking</button>
+      <div v-else class="clock">
+        <span>{{ timeLeft.minutes }}</span>:<span>{{ timeLeft.seconds }}</span>
+      </div>
+      <div v-if="showAlert" class="alert">Cooking time finished! Enjoy your meal!</div>
 
-    <!-- Review button -->
-    <button class="rate-btn" @click="toggleReviewForm">Rate</button>
+      <!-- Review button -->
+      <button class="rate-btn" @click="toggleReviewForm">Rate</button>
+    </div>
 
     <!-- Review form -->
-    <!-- <div v-if="showReviewForm && currentUserEmail !== recipeCreatorEmail"> -->
-      <div v-if="showReviewForm">
-  <form @submit.prevent="submitReview">
-    <label for="review-description">Review Description:</label>
-    <textarea id="review-description" v-model="reviewDescription"></textarea>
-    <label for="star-rating">Star Rating:</label>
-    <select id="star-rating" v-model="starRating">
-      <option value="1">1 star</option>
-      <option value="2">2 stars</option>
-      <option value="3">3 stars</option>
-      <option value="4">4 stars</option>
-      <option value="5">5 stars</option>
-    </select>
-    <button type="submit">Submit Review</button>
-  </form>
-</div>
-
+    <div v-if="showReviewForm" class="review-form">
+      <h3>Leave a Review</h3>
+      <form @submit.prevent="submitReview">
+        <div class="form-group">
+          <label for="review-description">Review Description:</label>
+          <textarea id="review-description" v-model="reviewDescription" class="form-control" rows="6" placeholder="Write your review here"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="star-rating">Star Rating:</label>
+          <div class="star-rating">
+            <input type="radio" id="star5" name="star-rating" v-model="starRating" value="5" />
+            <label for="star5" title="5 stars"><i class="fas fa-star"></i></label>
+            <input type="radio" id="star4" name="star-rating" v-model="starRating" value="4" />
+            <label for="star4" title="4 stars"><i class="fas fa-star"></i></label>
+            <input type="radio" id="star3" name="star-rating" v-model="starRating" value="3" />
+            <label for="star3" title="3 stars"><i class="fas fa-star"></i></label>
+            <input type="radio" id="star2" name="star-rating" v-model="starRating" value="2" />
+            <label for="star2" title="2 stars"><i class="fas fa-star"></i></label>
+            <input type="radio" id="star1" name="star-rating" v-model="starRating" value="1" />
+            <label for="star1" title="1 star"><i class="fas fa-star"></i></label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit Review</button>
+      </form>
+    </div>
 
     <!-- Reviews -->
     <div v-if="reviews.length > 0">
       <h3>Reviews:</h3>
       <ul>
         <li v-for="review in reviews" :key="review.id">
-  <p>{{ review.description }}</p>
-  <p>Rating: {{ review.rating }}</p>
-  <p>By: {{ review.userEmail }}</p> <!-- Display user's email -->
-</li> 
+          <p>{{ review.description }}</p>
+          <p>Rating: {{ review.rating }}</p>
+          <p>By: {{ review.userEmail }}</p> <!-- Display user's email -->
+        </li> 
       </ul>
     </div>
 
@@ -110,26 +120,26 @@ export default {
       }
     },
     async fetchRecipeDetails() {
-  try {
-    const recipeId = this.$route.params.id;
-    const userId = this.$route.params.userId;
-    const recipeDoc = await getDoc(doc(db, `users/${userId}/recepti/${recipeId}`));
-    if (recipeDoc.exists()) {
-      this.recipe = recipeDoc.data();
-      // Fetch the creator's email
-      const userDoc = await getDoc(doc(db, `users/${userId}`));
-      if (userDoc.exists()) {
-        this.recipeCreatorEmail = userDoc.data().email;
+      try {
+        const recipeId = this.$route.params.id;
+        const userId = this.$route.params.userId;
+        const recipeDoc = await getDoc(doc(db, `users/${userId}/recepti/${recipeId}`));
+        if (recipeDoc.exists()) {
+          this.recipe = recipeDoc.data();
+          // Fetch the creator's email
+          const userDoc = await getDoc(doc(db, `users/${userId}`));
+          if (userDoc.exists()) {
+            this.recipeCreatorEmail = userDoc.data().email;
+          }
+        } else {
+          console.error('No such recipe!');
+        }
+      } catch (error) {
+        console.error('Error fetching recipe details:', error);
+      } finally {
+        this.loading = false;
       }
-    } else {
-      console.error('No such recipe!');
-    }
-  } catch (error) {
-    console.error('Error fetching recipe details:', error);
-  } finally {
-    this.loading = false;
-  }
-},
+    },
 
     async startCooking() {
       this.cooking = true;
@@ -163,23 +173,18 @@ export default {
       }
     },
     toggleReviewForm() {
-      
       if (this.currentUserEmail === this.recipeCreatorEmail) {
-      // Display an alert
-      alert("You can't review your own recipe.");
-      return; // Stop further execution
-      }
-      else {
-      this.showReviewForm = !this.showReviewForm;
+        // Display an alert
+        alert("You can't review your own recipe.");
+        return; // Stop further execution
+      } else {
+        this.showReviewForm = !this.showReviewForm;
       }
     },
     async submitReview() {
       try {
         const recipeId = this.$route.params.id;
         const userId = this.$route.params.userId;
-
-        
-
 
         // Add review to Firebase
         await addDoc(collection(db, `users/${userId}/recepti/${recipeId}/reviews`), {
@@ -263,12 +268,7 @@ export default {
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-.recipe-details p {
-  color: #555;
-  line-height: 1.6;
-  margin-bottom: 15px;
-}
-
+/* Continued Recipe Details Styles */
 .recipe-details p strong {
   color: #333;
 }
@@ -314,4 +314,112 @@ export default {
   margin-top: 10px;
   border-radius: 5px;
 }
+
+/* Rate Button Styles */
+.rate-btn {
+  background: #66cc80;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  /*margin: 20px auto 10px; */
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.rate-btn:hover {
+  background: linear-gradient(90deg, #66cc80 0%, #4CAF50 100%);
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px; /* Add margin to separate from the other elements */
+}
+
+.star-rating {
+  display: flex;
+  align-items: center;
+}
+
+.star-rating input[type="radio"] {
+  display: none;
+}
+
+.star-rating label {
+  cursor: pointer;
+  font-size: 24px;
+  color: #ffd700;
+  margin-right: 5px; /* Add some spacing between stars */
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+  color: #ffbb00;
+}
+
+
+/* Review Form Styles */
+.review-form {
+  margin-top: 20px;
+}
+
+.review-form h3 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.review-form form {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.review-form .form-group {
+  margin-bottom: 20px;
+}
+
+.review-form label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.review-form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: vertical;
+}
+
+.review-form .star-rating {
+  margin-top: 10px;
+}
+
+.review-form button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition-duration: 0.4s;
+}
+
+.review-form button:hover {
+  background-color: #45a049;
+}
 </style>
+

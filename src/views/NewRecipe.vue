@@ -6,15 +6,15 @@
     </div>
     <form @submit.prevent="submitForm">
       <div class="form-group">
-        <label for="title">Title:</label>
+        <label for="title">Title</label>
         <input type="text" id="title" v-model="title" required>
       </div>
       <div class="form-group">
-        <label for="ingredients">Ingredients:</label>
+        <label for="ingredients">Ingredients</label>
         <textarea id="ingredients" v-model="ingredients" rows="4" required></textarea>
       </div>
       <div class="form-group">
-        <label for="courses">Courses:</label>
+        <label for="courses">Courses</label>
         <select id="courses" v-model="courses" required>
           <option value="">Select a course</option>
           <option value="breakfast">Breakfast</option>
@@ -26,24 +26,27 @@
         </select>
       </div>
       <div class="form-group">
-        <label for="prep-time">Prep Time (minutes):</label>
+        <label for="prep-time">Prep Time (minutes)</label>
         <input type="number" id="prep-time" v-model="prepTime" required>
       </div>
       <div class="form-group">
-        <label for="cooking-time">Cooking Time (minutes):</label>
+        <label for="cooking-time">Cooking Time (minutes)</label>
         <input type="number" id="cooking-time" v-model="cookingTime" required>
       </div>
       <div class="form-group">
-        <label for="methods">Methods:</label>
+        <label for="methods">Methods</label>
         <textarea id="methods" v-model="methods" rows="4" required></textarea>
       </div>
       <div class="form-group">
-        <label for="image">Image:</label>
+        <label for="image" class="custom-file-upload"><i class="fa-regular fa-image"></i>
+        </label>
         <input type="file" id="image" @change="handleImageUpload" accept="image/*" required>
       </div>
-      <button type="submit">Create Recipe</button>
-      <button type="button" @click="resetForm">Reset</button>
-      <button type="button" @click="goToMyRecipes">My Recipes</button>
+      <div class="button-group">
+        <button type="submit"><b>Create</b></button>
+        <button type="button" @click="resetForm">Reset</button>
+        <button type="button" @click="goToMyRecipes">My Recipes</button>
+      </div>
     </form>
   </div>
 </template>
@@ -134,15 +137,18 @@ export default {
 .new-recipe {
   max-width: 600px;
   margin: 0 auto;
+  padding: 20px; /* Add padding for better spacing */
 }
 
 .title-container {
   display: flex;
-  align-items: center; /* Center vertically */
+  align-items: center;
+  margin-bottom: 20px; /* Add margin to separate the title from the form */
 }
 
 .title-container i {
-  margin-right: 10px; /* Spacing between icon and title */
+  margin-right: 20px; /* Increased spacing between icon and title */
+  cursor: pointer;
 }
 
 h2 {
@@ -169,10 +175,34 @@ input[type="number"] {
   box-sizing: border-box;
 }
 
+input[type="file"] {
+  display: none; /* Hide the default file input */
+}
+
+.custom-file-upload {
+  display: inline-block;
+  padding: 10px 20px;
+  cursor: pointer;
+  background-color: #80ED99;
+  color: black;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.custom-file-upload:hover {
+  background-color: #80ED99;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between; /* Space buttons evenly */
+  margin-top: 20px; /* Add margin to the top of the button group */
+}
+
 button {
   padding: 10px 20px;
-  background-color: #4CAF50;
-  color: #fff;
+  background-color: #80ED99;
+  color: black;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -180,6 +210,6 @@ button {
 }
 
 button:hover {
-  background-color: #45a049;
+  background-color: #80ED99;
 }
 </style>

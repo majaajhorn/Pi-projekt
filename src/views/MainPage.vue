@@ -48,21 +48,31 @@ export default {
 
 <style scoped>
 .main-container {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
   padding-bottom: 60px; /* Ensure there's space for the fixed navbar */
+  padding-top: 20px; /* Add padding to top for spacing */
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 20px; /* Add margin below the header */
 }
 
 .buttons-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 20px;
+  justify-content: center;
+  flex-grow: 1; /* Allow the buttons container to take up remaining space */
 }
 
 #novi_recept {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   padding: 10px 20px;
   font-size: 16px;
   font-weight: bold;
@@ -72,6 +82,8 @@ export default {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  width: 200px; /* Ensure consistent button width */
+  margin-bottom: 10px; /* Add margin between buttons */
 }
 
 #novi_recept:hover {

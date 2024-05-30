@@ -37,7 +37,7 @@ export default {
     const recipes = ref([]);
     const filteredRecipes = ref([]);
     const loading = ref(true);
-    const showFilterPanel = ref(false); // Flag to toggle filter panel visibility
+    const showFilterPanel = ref(false);
     const filterByIngredients = ref('');
     const filterByCourses = ref('');
 
@@ -66,14 +66,11 @@ export default {
     const filterRecipes = () => {
       let filtered = recipes.value;
 
-      // Check if any filtering conditions are present
       if (!filterByIngredients.value && !filterByCourses.value && !searchTerm.value) {
-        // No filtering conditions, display "No recipes found"
         filteredRecipes.value = [];
         return;
       }
 
-      // Apply filter by ingredients
       if (filterByIngredients.value) {
         const filterIngredient = filterByIngredients.value.toLowerCase();
         filtered = filtered.filter(recipe =>
@@ -81,7 +78,6 @@ export default {
         );
       }
 
-      // Apply filter by courses
       if (filterByCourses.value) {
         const filterCourse = filterByCourses.value.toLowerCase();
         filtered = filtered.filter(recipe =>
@@ -89,7 +85,6 @@ export default {
         );
       }
 
-      // Apply search term filter
       if (searchTerm.value) {
         const searchTermLower = searchTerm.value.toLowerCase();
         filtered = filtered.filter(recipe =>
@@ -99,12 +94,9 @@ export default {
         filteredRecipes.value = [];
       }
 
-      // Set the filtered recipes
       filteredRecipes.value = filtered;
 
-      // Check if any recipes are found after filtering
       if (filtered.length === 0) {
-        // No recipes found, display "No recipes found"
         filteredRecipes.value = [];
       }
     };
@@ -132,7 +124,7 @@ export default {
       showFilterPanel.value = !showFilterPanel.value;
     };
 
-    fetchRecipes(); // Initial fetch
+    fetchRecipes();
 
     return {
       searchTerm,
@@ -143,7 +135,7 @@ export default {
       toggleFilter,
       showFilterPanel,
       applyFilters,
-      resetFilters
+      resetFilters,
     };
   }
 };
@@ -155,6 +147,8 @@ export default {
   flex-direction: column;
   align-items: center;
   padding: 20px;
+  width: 90%;
+  max-width: 400px;
 }
 
 .search-input-container {
@@ -168,10 +162,10 @@ export default {
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 10px;
   margin-right: 10px;
   width: 200px;
-  color: black; /* Change text color to black */
+  color: black;
 }
 
 .filter-button {
@@ -181,7 +175,7 @@ export default {
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
   transition: background-color 0.3s ease;
   background-color: #80ED99;
@@ -199,13 +193,13 @@ export default {
 .filter-panel {
   background-color: #ccffdd;
   border: 1px solid #80ED99;
-  border-radius: 15px;
+  border-radius: 10px;
   padding: 20px;
   margin-bottom: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 400px; /* Adjust the width as needed */
+  max-width: 400px;
 }
 
 .filter-panel input {
@@ -213,11 +207,11 @@ export default {
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 10px;
   width: 100%;
   max-width: 300px;
   background-color: #80ED99;
-  color: black; /* Change text color to black */
+  color: black;
 }
 
 .filter-buttons {
@@ -231,7 +225,7 @@ export default {
   padding: 10px;
   font-size: 16px;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
   transition: background-color 0.3s ease;
   width: 48%;
@@ -261,12 +255,12 @@ export default {
 .recipe-item {
   padding: 10px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 10px;
   margin-bottom: 10px;
 }
 
 .recipe-link {
-  color: #333; /* Change to your preferred text color */
+  color: #333;
   text-decoration: none;
 }
 
@@ -274,4 +268,3 @@ export default {
   text-decoration: underline;
 }
 </style>
-
