@@ -11,8 +11,6 @@
     <p><strong>Cooking Time:</strong> {{ recipe.cookingTime }} minutes</p>
     <p><strong>Methods:</strong></p>
     <p>{{ recipe.methods }}</p>
-    <!---->
-    <p><strong>Created by:</strong> {{ userEmail }}</p>
 
     <div class="button-container">
       <button class="start-cooking-btn" @click="startCooking" v-if="!cooking">Start Cooking</button>
@@ -68,9 +66,10 @@
   <Navbar />
 </template>
 
+
 <script>
 import { db, auth } from '@/Firebase/firebase'; // Assuming you have auth exported from Firebase
-import { doc, getDoc, collection, addDoc, getDocs, query, where } from 'firebase/firestore';
+import { doc, getDoc, collection, addDoc, getDocs, query } from 'firebase/firestore';
 import Navbar from '../components/Navbar.vue';
 import alarmSound from '../assets/AlarmSound.mp3.mp3';
 
@@ -95,6 +94,7 @@ export default {
       starRating: 1,
       reviews: [],
       currentUserEmail: null, // Store current user's email
+      recipeCreatorEmail: null, // Store recipe creator's email
     };
   },
   async created() {
@@ -231,6 +231,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 /* Recipe Details Styles */
