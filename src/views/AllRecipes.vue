@@ -12,6 +12,8 @@
         <p><strong>Created by:</strong> {{ recipe.userEmail }}</p>
         <p v-if="recipe.averageRating !== null"><strong>Average Rating:</strong> {{ recipe.averageRating.toFixed(2) }}</p>
         <p v-else><strong>Average Rating:</strong> No ratings yet</p>
+        <!-- Only render delete button if user is admin -->
+        <button v-if="isAdmin" @click="deleteRecipe(recipe)">Delete Recipe</button>
       </div>
     </div>
     <Navbar />
@@ -20,8 +22,9 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-import { getFirestore, collection, getDocs, doc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
 import Navbar from '../components/Navbar.vue';
+import { getAuth } from 'firebase/auth';
 
 export default {
   name: 'AllRecipes',
@@ -31,6 +34,7 @@ export default {
   setup() {
     const recipes = ref([]);
     const loading = ref(true);
+    const isAdmin = ref(false); // Track if the user is an admin
 
     const fetchRecipes = async () => {
       const db = getFirestore();
@@ -57,13 +61,13 @@ export default {
           reviewsSnapshot.forEach(reviewDoc => {
             const reviewData = reviewDoc.data();
             const rating = Number(reviewData.rating); // Convert rating to number
-            console.log(`Review Rating: ${rating}`); // Log the rating for debugging
+            //console.log(`Review Rating: ${rating}`); // Log the rating for debugging
             totalRating += rating;
             numberOfReviews++;
           });
 
           const averageRating = numberOfReviews > 0 ? totalRating / numberOfReviews : null;
-          console.log(`Recipe ID: ${recipeId}, Total Rating: ${totalRating}, Number of Reviews: ${numberOfReviews}, Average Rating: ${averageRating}`); // Log the average rating for debugging
+          //console.log(`Recipe ID: ${recipeId}, Total Rating: ${totalRating}, Number of Reviews: ${numberOfReviews}, Average Rating: ${averageRating}`); // Log the average rating for debugging
 
           allRecipes.push({
             userId,
@@ -79,13 +83,37 @@ export default {
       loading.value = false;
     };
 
+    const deleteRecipe = async (recipe) => {
+      const db = getFirestore();
+      const recipeDocRef = doc(db, `users/${recipe.userId}/recepti/${recipe.id}`);
+      try {
+        await deleteDoc(recipeDocRef);
+        // Remove the deleted recipe from the recipes array
+        recipes.value = recipes.value.filter(r => r.id !== recipe.id);
+        console.log('Recipe deleted successfully');
+      } catch (error) {
+        console.error('Error deleting recipe:', error);
+      }
+    };
+
+    const checkAdmin = () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (user && user.email === 'admin@gmail.com') {
+        isAdmin.value = true;
+      }
+    };
+
     onMounted(() => {
       fetchRecipes();
+      checkAdmin();
     });
 
     return {
       recipes,
-      loading
+      loading,
+      isAdmin,
+      deleteRecipe
     };
   }
 };
