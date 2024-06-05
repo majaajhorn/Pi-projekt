@@ -127,7 +127,7 @@ export default {
       this.$router.push('/MainPage');
     },
     goToMyRecipes() {
-      this.$router.push('/MyRecipes');
+      this.$router.push('/:userId/MyRecipes');
     }
   },
 };
