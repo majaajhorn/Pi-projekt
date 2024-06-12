@@ -7,7 +7,7 @@
       <ul class="recipe-list">
         <li v-for="recipe in favoriteRecipes" :key="recipe.id" class="recipe-item">
           <div class="recipe-image-container">
-            <router-link :to="{ name: 'RecipeDetails', params: { userId: recipe.userId, id: recipe.id } }">
+            <router-link :to="{ name: 'RecipeDetails', params: { userId: recipe.userId, id: recipe.id } }" class="no-decoration">
               <img :src="recipe.imageUrl" alt="Recipe Image" class="recipe-image" v-if="recipe.imageUrl" />
               <h3>{{ recipe.title }}</h3>
             </router-link>
@@ -157,7 +157,7 @@ h2 {
 
 .no-decoration {
   text-decoration: none;
-  color: inherit;
+  color: black; /* Set text color to black */
 }
 
 .button-container {
