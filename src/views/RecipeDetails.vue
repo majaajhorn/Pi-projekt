@@ -57,7 +57,7 @@
         <li v-for="review in reviews" :key="review.id" class="review-item">
           <div class="review-header">
             <span class="review-user">{{ review.userEmail }}</span>
-            <span class="review-rating">{{ review.rating }}</span> <!-- Display the numeric rating -->
+            <span class="review-rating">{{ review.rating }}</span> 
           </div>
           <p class="review-description">{{ review.description }}</p>
           <span class="review-timestamp">{{ new Date(review.timestamp.seconds * 1000).toLocaleString() }}</span>
@@ -65,17 +65,15 @@
       </ul>
     </div>
 
-    <!-- Audio element for playing alarm sound -->
     <audio ref="alarmSound" :src="alarmSoundSrc"></audio>
   </div>
   <div v-else>Loading...</div>
-
-  <!-- Include navbar component -->
+  
   <Navbar />
 </template>
 
 <script>
-import { db, auth } from '@/Firebase/firebase'; // Assuming you have auth exported from Firebase
+import { db, auth } from '@/Firebase/firebase'; 
 import { doc, getDoc, collection, addDoc, getDocs, query } from 'firebase/firestore';
 import Navbar from '../components/Navbar.vue';
 import alarmSound from '../assets/AlarmSound.mp3.mp3';
@@ -95,14 +93,14 @@ export default {
         minutes: 0,
         seconds: 0,
       },
-      alarmSoundSrc: alarmSound, // Use the imported alarm sound
+      alarmSoundSrc: alarmSound, 
       showReviewForm: false,
       reviewDescription: '',
       starRating: 1,
-      selectedRating: null, // New property to store the selected star rating
+      selectedRating: null, 
       reviews: [],
-      currentUserEmail: null, // Store current user's email
-      recipeCreatorEmail: null, // Store recipe creator's email
+      currentUserEmail: null, 
+      recipeCreatorEmail: null, 
     };
   },
   async created() {
@@ -146,7 +144,7 @@ export default {
 
     async startCooking() {
       this.cooking = true;
-      const totalTime = this.recipe.cookingTime * 60; // Convert cooking time to seconds
+      const totalTime = this.recipe.cookingTime * 60; 
       let timeLeft = totalTime;
       const countdown = setInterval(() => {
         const minutes = Math.floor(timeLeft / 60);
@@ -167,7 +165,7 @@ export default {
     playAlarmSound() {
       try {
         const audioElement = this.$refs.alarmSound;
-        audioElement.load(); // Ensure the audio is loaded
+        audioElement.load(); 
         audioElement.play().catch((error) => {
           console.error('Error playing alarm sound:', error);
         });
@@ -177,9 +175,8 @@ export default {
     },
     toggleReviewForm() {
       if (this.currentUserEmail === this.recipeCreatorEmail) {
-        // Display an alert
         alert("You can't review your own recipe.");
-        return; // Stop further execution
+        return; 
       } else {
         this.showReviewForm = !this.showReviewForm;
       }
@@ -193,14 +190,14 @@ export default {
         await addDoc(collection(db, `users/${userId}/recepti/${recipeId}/reviews`), {
           description: this.reviewDescription,
           rating: this.starRating,
-          userEmail: this.currentUserEmail, // Use current user's email
+          userEmail: this.currentUserEmail, 
           timestamp: new Date(),
         });
 
         // Reset review form fields
         this.reviewDescription = '';
         this.starRating = 1;
-        this.selectedRating = null; // Clear selected rating after submission
+        this.selectedRating = null; 
 
         // Fetch updated reviews
         await this.fetchReviews();
@@ -258,12 +255,11 @@ export default {
 
 
 <style scoped>
-/* Recipe Details Styles */
 .recipe-details {
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
-  padding-bottom: 100px; /* Adjusted for navbar height */
+  padding-bottom: 100px; 
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
@@ -308,7 +304,7 @@ export default {
 }
 
 .start-cooking-btn:hover {
-  background-color: #45a049; /* Darker Green */
+  background-color: #45a049; 
 }
 
 .clock {
@@ -334,7 +330,6 @@ export default {
   border-radius: 5px;
 }
 
-/* Rate Button Styles */
 .rate-btn {
   background: #66cc80;
   border: none;
@@ -357,7 +352,7 @@ export default {
 .button-container {
   display: flex;
   justify-content: space-between;
-  margin-top: 20px; /* Add margin to separate from the other elements */
+  margin-top: 20px; 
 }
 
 .star-rating {
