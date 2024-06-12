@@ -13,7 +13,7 @@
         <p v-if="recipe.averageRating !== null"><strong>Average Rating:</strong> {{ recipe.averageRating.toFixed(2) }}</p>
         <p v-else><strong>Average Rating:</strong> No ratings yet</p>
         <!-- Only render delete button if user is admin -->
-        <button v-if="isAdmin" @click="deleteRecipe(recipe)">Delete Recipe</button>
+        <button v-if="isAdmin" @click="deleteRecipe(recipe)" class="delete-button">Delete Recipe</button>
       </div>
     </div>
     <Navbar />
@@ -61,14 +61,12 @@ export default {
           reviewsSnapshot.forEach(reviewDoc => {
             const reviewData = reviewDoc.data();
             const rating = Number(reviewData.rating); // Convert rating to number
-            //console.log(`Review Rating: ${rating}`); // Log the rating for debugging
             totalRating += rating;
             numberOfReviews++;
           });
 
           const averageRating = numberOfReviews > 0 ? totalRating / numberOfReviews : null;
-          //console.log(`Recipe ID: ${recipeId}, Total Rating: ${totalRating}, Number of Reviews: ${numberOfReviews}, Average Rating: ${averageRating}`); // Log the average rating for debugging
-
+          
           allRecipes.push({
             userId,
             userEmail,
@@ -151,5 +149,24 @@ div h1 {
 .recipe-link {
   color: black; /* Set title color to black */
   text-decoration: none;
+}
+
+.delete-button {
+  padding: 10px 20px;
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  border-radius: 12px;
+}
+
+.delete-button:hover {
+  background-color: #45a049; /* Darker green */
 }
 </style>
