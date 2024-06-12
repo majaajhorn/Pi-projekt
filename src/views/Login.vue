@@ -1,21 +1,26 @@
 
 <template>
-  <div class="login-container">
-    <h2>Login</h2>
-    <form @submit.prevent="handleSubmit">
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" v-model="email" required>
+  <div class="split-screen">
+    <div class="left"></div>
+    <div class="right">
+      <div class="login-container">
+        <h2>Welcome to <span class="plant">Plantenious</span></h2>
+        <form @submit.prevent="handleSubmit">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" v-model="email" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" v-model="password" required>
+          </div>
+          <button type="submit">Login</button>
+        </form>
+        <button @click="forgotPassword" type="button" class="forgot-password">Forgot password?</button>
+        <h4>Don't have an account? <span class="black_text">Create a new one</span></h4>
+        <button @click="goToSignUp" type="button" id="btn_vodi_na_signup">Click me</button>
       </div>
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" v-model="password" required>
-      </div>
-      <button type="submit">LOGIN</button>
-    </form>
-    <button @click="forgotPassword" type="button" class="forgot-password">Forgot password?</button>
-    <h4>Don't have an account? Click to sign up</h4>
-    <button @click="goToSignUp" type="button" id="btn_vodi_na_signup">Click me</button>
+    </div>
   </div>
 </template>
 
@@ -34,20 +39,27 @@ export default {
   },
   methods: {
     async handleSubmit() {
-      const auth = getAuth();
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, this.email, this.password);
-        const user = userCredential.user;
-        console.log('User:', user);
+  const auth = getAuth();
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, this.email, this.password);
+    const user = userCredential.user;
+    console.log('User:', user);
 
-        await this.updateFirestorePassword(user.uid, this.password);
+    // Increment timesLoggedIn in Firestore
+    const userDocRef = doc(db, 'users', user.uid);
+    const userDocSnap = await getDoc(userDocRef);
+    if (userDocSnap.exists()) {
+      const userData = userDocSnap.data();
+      const updatedTimesLoggedIn = (userData.timesLoggedIn || 0) + 1;
+      await updateDoc(userDocRef, { timesLoggedIn: updatedTimesLoggedIn });
+    }
 
-        this.$router.push("/mainPage");
-      } catch (error) {
-        console.error('Error logging in:', error);
-        alert('Failed to log in. Please check your credentials.');
-      }
-    },
+    this.$router.push("/mainPage");
+  } catch (error) {
+    console.error('Error logging in:', error);
+    alert('Failed to log in. Please check your credentials.');
+  }
+},
     async updateFirestorePassword(uid, newPassword) {
       try {
         const userDocRef = doc(db, 'users', uid);
@@ -84,35 +96,48 @@ export default {
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background-color: #f5f5f5;
+}
+
+.split-screen {
+  display: flex;
+  height: 100vh;
+}
+
+.left {
+  flex: 1;
+  background-image: url('../assets/login_wallpaper.jpg'); /* Update the path */
+  background-size: cover;
+  height: 100vh;
+}
+
+.right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .login-container {
-  background-color: #fff;
+  /* Remove the background color, border, and box shadow */
   padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   width: 300px;
   text-align: center;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 
 h2 {
-  margin-bottom: 20px;
+  margin-bottom: 50px; 
   color: #333;
 }
 
 .form-group {
   margin-bottom: 15px;
   text-align: left;
+  margin-top: 20;
 }
 
 label {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   font-weight: bold;
   color: #333;
 }
@@ -148,5 +173,13 @@ button:hover {
 
 .forgot-password:hover {
   background-color: #ec971f;
+}
+
+.black_text {
+  color: black; /* Text color */
+}
+
+.plant {
+  color: #5cc77a;
 }
 </style>
