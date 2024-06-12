@@ -34,11 +34,16 @@
         <div class="form-group">
           <label for="star-rating">Star Rating:</label>
           <div class="star-rating">
-            <input type="radio" id="star1" name="star-rating" v-model="starRating" value="5" /> <label for="star1" title="5 stars"><i class="fas fa-star"></i></label>
-            <input type="radio" id="star2" name="star-rating" v-model="starRating" value="4" /> <label for="star2" title="4 stars"><i class="fas fa-star"></i></label>
-            <input type="radio" id="star3" name="star-rating" v-model="starRating" value="3" /> <label for="star3" title="3 stars"><i class="fas fa-star"></i></label>
-            <input type="radio" id="star4" name="star-rating" v-model="starRating" value="2" /> <label for="star4" title="2 stars"><i class="fas fa-star"></i></label>
-            <input type="radio" id="star5" name="star-rating" v-model="starRating" value="1" /> <label for="star5" title="1 star"><i class="fas fa-star"></i></label>
+            <input type="radio" id="star1" name="star-rating" v-model="starRating" :value="5" @click="selectRating(5)" :checked="selectedRating === 5" />
+            <label for="star1" title="5 stars"><i class="fas fa-star" :class="{ 'selected': selectedRating === 5 }"></i></label>
+            <input type="radio" id="star2" name="star-rating" v-model="starRating" :value="4" @click="selectRating(4)" :checked="selectedRating === 4" />
+            <label for="star2" title="4 stars"><i class="fas fa-star" :class="{ 'selected': selectedRating === 4 }"></i></label>
+            <input type="radio" id="star3" name="star-rating" v-model="starRating" :value="3" @click="selectRating(3)" :checked="selectedRating === 3" />
+            <label for="star3" title="3 stars"><i class="fas fa-star" :class="{ 'selected': selectedRating === 3 }"></i></label>
+            <input type="radio" id="star4" name="star-rating" v-model="starRating" :value="2" @click="selectRating(2)" :checked="selectedRating === 2" />
+            <label for="star4" title="2 stars"><i class="fas fa-star" :class="{ 'selected': selectedRating === 2 }"></i></label>
+            <input type="radio" id="star5" name="star-rating" v-model="starRating" :value="1" @click="selectRating(1)" :checked="selectedRating === 1" />
+            <label for="star5" title="1 star"><i class="fas fa-star" :class="{ 'selected': selectedRating === 1 }"></i></label>
           </div>
         </div>
         <button type="submit" class="btn btn-primary">Submit Review</button>
@@ -92,6 +97,7 @@ export default {
       showReviewForm: false,
       reviewDescription: '',
       starRating: 1,
+      selectedRating: null, // New property to store the selected star rating
       reviews: [],
       currentUserEmail: null, // Store current user's email
       recipeCreatorEmail: null, // Store recipe creator's email
@@ -192,6 +198,7 @@ export default {
         // Reset review form fields
         this.reviewDescription = '';
         this.starRating = 1;
+        this.selectedRating = null; // Clear selected rating after submission
 
         // Fetch updated reviews
         await this.fetchReviews();
@@ -208,7 +215,7 @@ export default {
           collection(db, `users/${userId}/recepti/${recipeId}/reviews`)
         );
         const querySnapshot = await getDocs(q);
-        const reviewsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        let reviewsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
         // Update the current user's email for existing reviews
         for (const review of reviewsData) {
@@ -223,9 +230,24 @@ export default {
           }
         }
 
+        // Sort reviews by timestamp in descending order (newest first)
+        reviewsData = reviewsData.sort((a, b) => b.timestamp - a.timestamp);
+
         this.reviews = reviewsData;
       } catch (error) {
         console.error('Error fetching reviews:', error);
+      }
+    },
+
+    // Method to select a star rating
+    selectRating(rating) {
+      this.selectedRating = rating;
+    },
+    toggleStarColor(rating) {
+      if (this.selectedRating === rating) {
+        this.selectedRating = null; // Deselect if already selected
+      } else {
+        this.selectedRating = rating;
       }
     },
   },
@@ -358,6 +380,11 @@ export default {
 .star-rating label:hover,
 .star-rating label:hover ~ label {
   color: #ffbb00;
+}
+
+/* Style for selected stars */
+.star-rating label.selected {
+  color: #ffd700; /* Yellow color */
 }
 
 
