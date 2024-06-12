@@ -1,21 +1,26 @@
 
 <template>
-  <div class="signup-container">
-    <h2>SIGN UP</h2>
-    <form @submit.prevent="handleSignUp">
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" v-model="email" required>
+  <div class="split-screen">
+    <div class="left"></div>
+    <div class="right">
+      <div class="signup-container">
+        <h2>Welcome to <span class="plant">Plantenious</span></h2>
+        <form @submit.prevent="handleSignUp">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" v-model="email" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" v-model="password" @input="showPasswordHint = true" required>
+            <small class="password-hint" v-if="showPasswordHint">Password must be at least 6 characters long, contain at least one uppercase letter and one number.</small>
+          </div>
+          <button type="submit">Sign up</button>
+        </form>
+        <h4>Already have an account? Click to log in</h4>
+        <button @click="goToLogin" type="button">Login</button>
       </div>
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" v-model="password" @input="showPasswordHint = true" required>
-        <small class="password-hint" v-if="showPasswordHint">Password must be at least 6 characters long, contain at least one uppercase letter and one number.</small>
-      </div>
-      <button type="submit">SIGN UP</button>
-    </form>
-    <h4>Already have an account? Click to log in</h4>
-    <button @click="goToLogin" type="button">Login</button>
+    </div>
   </div>
 </template>
 
@@ -71,35 +76,51 @@ export default {
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background-color: #f5f5f5;
 }
 
-.signup-container {
+.split-screen {
+  display: flex;
+  height: 100vh;
+}
+
+.left {
+  flex: 1;
+  background-image: url('../assets/login_wallpaper.jpg'); /* Update the path */
+  background-size: cover;
+  height: 100vh;
+  
+}
+
+.right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-container {
   background-color: #fff;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   width: 300px;
   text-align: center;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 
 h2 {
-  margin-bottom: 20px;
+  margin-bottom: 50px; 
   color: #333;
 }
 
 .form-group {
   margin-bottom: 15px;
   text-align: left;
+  margin-top: 20;
 }
 
 label {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   font-weight: bold;
   color: #333;
 }
@@ -110,6 +131,10 @@ input {
   border: 1px solid #ddd;
   border-radius: 5px;
   box-sizing: border-box;
+}
+
+.plant {
+  color: #5cc77a;
 }
 
 button {
