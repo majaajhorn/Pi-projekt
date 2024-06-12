@@ -7,14 +7,10 @@
       <ul class="recipe-list">
         <li v-for="recipe in recipes" :key="recipe.id" class="recipe-item">
           <div class="recipe-image-container">
-            <router-link :to="{ name: 'RecipeDetails', params: { userId: recipe.userId, id: recipe.id } }">
-           <!--  <router-link :to="{ name: 'RecipeDetails', params: { id: recipe.id } }" class="no-decoration"> -->
-            <!-- <router-link :to="{ name: 'RecipeDetails', params: { userId: recipe.userId, id: recipe.id } }">-->
-              
+            <router-link :to="{ name: 'RecipeDetails', params: { userId: recipe.userId, id: recipe.id } }" class="no-decoration">
               <img :src="recipe.imageUrl" alt="Recipe Image" class="recipe-image" v-if="recipe.imageUrl" />
               <h3>{{ recipe.title }}</h3>
-              </router-link>
-      
+            </router-link>
           </div>
           <div class="button-container">
             <button @click="editRecipe(recipe)" class="recipe-button"><i class="fas fa-edit"></i></button>
@@ -392,5 +388,14 @@ h2 {
   background-color: #dc3545; /* Red */
   border-radius: 5px;
   padding: 10px 20px;
+}
+
+.no-decoration {
+  text-decoration: none;
+  color: black;
+}
+
+.no-decoration:hover {
+  text-decoration: none;
 }
 </style>
