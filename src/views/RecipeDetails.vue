@@ -53,12 +53,15 @@
     <!-- Reviews -->
     <div v-if="reviews.length > 0">
       <h3>Reviews:</h3>
-      <ul>
-        <li v-for="review in reviews" :key="review.id">
-          <p>{{ review.description }}</p>
-          <p>Rating: {{ review.rating }}</p>
-          <p>By: {{ review.userEmail }}</p> <!-- Display user's email -->
-        </li> 
+      <ul class="reviews-list">
+        <li v-for="review in reviews" :key="review.id" class="review-item">
+          <div class="review-header">
+            <span class="review-user">{{ review.userEmail }}</span>
+            <span class="review-rating">{{ review.rating }}</span> <!-- Display the numeric rating -->
+          </div>
+          <p class="review-description">{{ review.description }}</p>
+          <span class="review-timestamp">{{ new Date(review.timestamp.seconds * 1000).toLocaleString() }}</span>
+        </li>
       </ul>
     </div>
 
@@ -70,7 +73,6 @@
   <!-- Include navbar component -->
   <Navbar />
 </template>
-
 
 <script>
 import { db, auth } from '@/Firebase/firebase'; // Assuming you have auth exported from Firebase
@@ -286,13 +288,12 @@ export default {
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Continued Recipe Details Styles */
 .recipe-details p strong {
   color: #333;
 }
 
 .start-cooking-btn {
-  background-color: #4CAF50; /* Green */
+  background-color: #4CAF50; 
   border: none;
   color: white;
   padding: 15px 32px;
@@ -343,7 +344,6 @@ export default {
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
-  /*margin: 20px auto 10px; */
   cursor: pointer;
   border-radius: 8px;
   transition: background 0.3s ease;
@@ -374,7 +374,7 @@ export default {
   cursor: pointer;
   font-size: 24px;
   color: #ffd700;
-  margin-right: 5px; /* Add some spacing between stars */
+  margin-right: 5px; 
 }
 
 .star-rating label:hover,
@@ -382,13 +382,10 @@ export default {
   color: #ffbb00;
 }
 
-/* Style for selected stars */
 .star-rating label.selected {
-  color: #ffd700; /* Yellow color */
+  color: #ffd700; 
 }
 
-
-/* Review Form Styles */
 .review-form {
   margin-top: 20px;
 }
@@ -445,4 +442,56 @@ export default {
 .review-form button:hover {
   background-color: #45a049;
 }
+
+/* Reviews List Styles */
+.reviews-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.review-item {
+  background-color: #f9f9f9;
+  border: 1px solid #e1e1e1;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.review-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.review-user {
+  font-weight: bold;
+  color: #333;
+}
+
+.review-rating {
+  color: #333;
+}
+
+.review-description {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.review-timestamp {
+  font-size: 14px;
+  color: #999;
+  text-align: right;
+  display: block;
+}
 </style>
+
