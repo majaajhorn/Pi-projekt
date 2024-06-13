@@ -17,8 +17,8 @@ import Statistics from '../views/Statistics.vue';
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView
+    name: 'Login',
+    component: Login
   },
   {
     path: '/login',
