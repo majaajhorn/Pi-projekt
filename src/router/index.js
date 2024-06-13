@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { createApp } from 'vue'; // Import createApp if not already imported
 import { getAuth } from 'firebase/auth';
-import HomeView from '../views/HomeView.vue';
+//import HomeView from '../views/HomeView.vue';
 import SignUp from '../views/SignUp.vue';
 import Login from '../views/Login.vue';
 import MainPage from '../views/MainPage.vue';
@@ -15,13 +15,13 @@ import AllRecipes from '../views/AllRecipes.vue';
 import Statistics from '../views/Statistics.vue';
 
 const routes = [
-  {
+ /* {
     path: '/',
-    name: 'Login',
-    component: Login
-  },
+    name: 'home',
+    component: HomeView
+  },*/
   {
-    path: '/login',
+    path: '/', // maknut ću /login
     name: 'Login',
     component: Login
   },
