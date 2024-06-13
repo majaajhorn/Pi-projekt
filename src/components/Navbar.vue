@@ -3,7 +3,7 @@
     <router-link to="/MyProfile" class="nav-item">
       <i class="fas fa-user"></i>
     </router-link>
-    <router-link to="/:userId/MyRecipes" class="nav-item"> <!-- THIS -->
+    <router-link to="/:userId/MyRecipes" class="nav-item">
       <i class="fas fa-utensils"></i>
     </router-link>
     <router-link to="/MainPage" class="nav-item">
@@ -11,6 +11,10 @@
     </router-link>
     <router-link to="/AllRecipes" class="nav-item">
       <i class="fa-solid fa-plate-wheat"></i>
+    </router-link>
+    <!-- Conditionally render Statistics icon for admin -->
+    <router-link v-if="isAdmin" to="/Statistics" class="nav-item">
+      <i class="fa-solid fa-chart-simple"></i>
     </router-link>
     <router-link to="/:userId/MyFavorites" class="nav-item">
       <i class="fas fa-heart"></i>
@@ -26,6 +30,11 @@ import { getAuth, signOut } from 'firebase/auth';
 
 export default {
   name: 'Navbar',
+  data() {
+    return {
+      isAdmin: false
+    };
+  },
   methods: {
     async logout() {
       const auth = getAuth();
@@ -37,6 +46,14 @@ export default {
         console.error("Logout error", error);
         window.alert("Log out has not been completed");
       }
+    }
+  },
+  created() {
+    // Check if user is admin when component is created
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (user && user.email === 'admin@gmail.com') {
+      this.isAdmin = true;
     }
   }
 };
