@@ -1,4 +1,3 @@
-
 <template>
   <div class="split-screen">
     <div class="left"></div>
@@ -88,7 +87,6 @@ body {
   background-image: url('../assets/login_wallpaper.jpg'); /* Update the path */
   background-size: cover;
   height: 100vh;
-  
 }
 
 .right {
@@ -96,13 +94,11 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-left: 20px; /* Added padding to the left */
 }
 
-.login-container {
-  background-color: #fff;
+.signup-container {
   padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   width: 300px;
   text-align: center;
 }
