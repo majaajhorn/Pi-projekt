@@ -12,6 +12,7 @@ import MyProfile from '../views/MyProfile.vue';
 import SearchButton from '../components/SearchButton.vue';
 import MyFavorites from '../views/MyFavorites.vue';
 import AllRecipes from '../views/AllRecipes.vue';
+import Statistics from '../views/Statistics.vue';
 
 const routes = [
   {
@@ -63,7 +64,12 @@ const routes = [
     path: '/AllRecipes',
     name: 'AllRecipes',
     component: AllRecipes
-  }
+  },
+  {
+    path: '/Statistics',
+    name: 'Statistics',
+    component: Statistics
+  },
 ];
 
 const router = createRouter({
