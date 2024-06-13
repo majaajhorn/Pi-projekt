@@ -57,7 +57,7 @@
         <li v-for="review in reviews" :key="review.id" class="review-item">
           <div class="review-header">
             <span class="review-user">{{ review.userEmail }}</span>
-            <span class="review-rating">{{ review.rating }}</span> 
+            <span class="review-rating">{{ review.rating }}</span> <!-- Display the numeric rating -->
           </div>
           <p class="review-description">{{ review.description }}</p>
           <span class="review-timestamp">{{ new Date(review.timestamp.seconds * 1000).toLocaleString() }}</span>
@@ -65,15 +65,17 @@
       </ul>
     </div>
 
+    <!-- Audio element for playing alarm sound -->
     <audio ref="alarmSound" :src="alarmSoundSrc"></audio>
   </div>
   <div v-else>Loading...</div>
-  
+
+  <!-- Include navbar component -->
   <Navbar />
 </template>
 
 <script>
-import { db, auth } from '@/Firebase/firebase'; 
+import { db, auth } from '@/Firebase/firebase'; // Assuming you have auth exported from Firebase
 import { doc, getDoc, collection, addDoc, getDocs, query } from 'firebase/firestore';
 import Navbar from '../components/Navbar.vue';
 import alarmSound from '../assets/AlarmSound.mp3.mp3';
@@ -93,14 +95,14 @@ export default {
         minutes: 0,
         seconds: 0,
       },
-      alarmSoundSrc: alarmSound, 
+      alarmSoundSrc: alarmSound, // Use the imported alarm sound
       showReviewForm: false,
       reviewDescription: '',
       starRating: 1,
-      selectedRating: null, 
+      selectedRating: null, // New property to store the selected star rating
       reviews: [],
-      currentUserEmail: null, 
-      recipeCreatorEmail: null, 
+      currentUserEmail: null, // Store current user's email
+      recipeCreatorEmail: null, // Store recipe creator's email
     };
   },
   async created() {
@@ -144,7 +146,7 @@ export default {
 
     async startCooking() {
       this.cooking = true;
-      const totalTime = this.recipe.cookingTime * 60; 
+      const totalTime = this.recipe.cookingTime * 60; // Convert cooking time to seconds
       let timeLeft = totalTime;
       const countdown = setInterval(() => {
         const minutes = Math.floor(timeLeft / 60);
@@ -165,7 +167,7 @@ export default {
     playAlarmSound() {
       try {
         const audioElement = this.$refs.alarmSound;
-        audioElement.load(); 
+        audioElement.load(); // Ensure the audio is loaded
         audioElement.play().catch((error) => {
           console.error('Error playing alarm sound:', error);
         });
@@ -175,8 +177,9 @@ export default {
     },
     toggleReviewForm() {
       if (this.currentUserEmail === this.recipeCreatorEmail) {
+        // Display an alert
         alert("You can't review your own recipe.");
-        return; 
+        return; // Stop further execution
       } else {
         this.showReviewForm = !this.showReviewForm;
       }
@@ -190,14 +193,14 @@ export default {
         await addDoc(collection(db, `users/${userId}/recepti/${recipeId}/reviews`), {
           description: this.reviewDescription,
           rating: this.starRating,
-          userEmail: this.currentUserEmail, 
+          userEmail: this.currentUserEmail, // Use current user's email
           timestamp: new Date(),
         });
 
         // Reset review form fields
         this.reviewDescription = '';
         this.starRating = 1;
-        this.selectedRating = null; 
+        this.selectedRating = null; // Clear selected rating after submission
 
         // Fetch updated reviews
         await this.fetchReviews();
@@ -241,6 +244,7 @@ export default {
     // Method to select a star rating
     selectRating(rating) {
       this.selectedRating = rating;
+      this.starRating = rating
     },
     toggleStarColor(rating) {
       if (this.selectedRating === rating) {
@@ -255,6 +259,7 @@ export default {
 
 
 <style scoped>
+/* Recipe Details Styles */
 .recipe-details {
   max-width: 600px;
   margin: 0 auto;
@@ -330,6 +335,7 @@ export default {
   border-radius: 5px;
 }
 
+/* Rate Button Styles */
 .rate-btn {
   background: #66cc80;
   border: none;
@@ -377,6 +383,7 @@ export default {
   color: #ffbb00;
 }
 
+.star-rating label.selected,
 .star-rating label.selected {
   color: #ffd700; 
 }
