@@ -20,10 +20,9 @@ const routes = [
     name: 'home',
     component: HomeView
   },*/
-  {
-    path: '/', // maknut ću /login
-    name: 'Login',
-    component: Login
+   {
+    path: '/',
+    redirect: '/login' // Redirekcija s početne rute na /login
   },
  {
     path: '/login', 
