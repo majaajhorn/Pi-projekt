@@ -125,35 +125,35 @@ div h1 {
 .recipe-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center; /* Center items horizontally */
+  justify-content: center; 
 }
 
 .recipe {
   width: 50%;
   border: 1px solid #ccc;
   padding: 16px;
-  margin: 16px 8px; /* Adjust margin */
+  margin: 16px 8px; 
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center items horizontally */
+  align-items: center; 
 }
 
 .recipe-image {
-  width: 150px; /* Set a fixed width */
-  height: 150px; /* Set a fixed height */
-  object-fit: cover; /* Ensure the image covers the container */
+  width: 150px;
+  height: 150px; 
+  object-fit: cover; 
   border-radius: 5px;
-  margin: 10px 0; /* Add some margin to separate the image from the text */
+  margin: 10px 0; 
 }
 
 .recipe-link {
-  color: black; /* Set title color to black */
+  color: black; 
   text-decoration: none;
 }
 
 .delete-button {
   padding: 10px 20px;
-  background-color: #4CAF50; /* Green */
+  background-color: #4CAF50; 
   border: none;
   color: white;
   text-align: center;
@@ -167,6 +167,6 @@ div h1 {
 }
 
 .delete-button:hover {
-  background-color: #45a049; /* Darker green */
+  background-color: #45a049; 
 }
 </style>
