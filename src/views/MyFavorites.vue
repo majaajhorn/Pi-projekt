@@ -115,7 +115,7 @@ export default {
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
-  padding-bottom: 80px; /* Add padding to the bottom */
+  padding-bottom: 80px; 
 }
 
 h2 {
@@ -132,22 +132,22 @@ h2 {
 }
 
 .recipe-item {
-  width: calc(33.33% - 20px); /* Adjust width for responsiveness */
+  width: calc(33.33% - 20px); 
   margin-bottom: 20px;
   background-color: #C7F9CC;
   border-radius: 10px;
   padding: 15px;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center content horizontally */
-  text-align: center; /* Center text */
+  align-items: center; 
+  text-align: center; 
 }
 
 .recipe-image-container {
   width: 150px;
   margin-bottom: 10px;
   display: flex;
-  justify-content: center; /* Center image horizontally */
+  justify-content: center; 
 }
 
 .recipe-image {
@@ -157,13 +157,13 @@ h2 {
 
 .no-decoration {
   text-decoration: none;
-  color: black; /* Set text color to black */
+  color: black; 
 }
 
 .button-container {
-  margin-top: auto; /* Push buttons to the bottom */
+  margin-top: auto; 
   display: flex;
-  justify-content: center; /* Center buttons horizontally */
+  justify-content: center; 
 }
 
 .recipe-button {
@@ -175,18 +175,18 @@ h2 {
 }
 
 .recipe-button .fa-trash-alt {
-  color: black; /* Black color for delete button */
+  color: black; 
 }
 
 .recipe-button .fa-heart {
-  color: red; /* Red color for heart button */
+  color: red; 
 }
 
 .recipe-button:hover .fa-trash-alt {
-  color: black; /* Ensure delete button stays black on hover */
+  color: black; 
 }
 
 .recipe-button:hover .fa-heart {
-  color: darkred; /* Darker red on hover */
+  color: darkred; 
 }
 </style>
