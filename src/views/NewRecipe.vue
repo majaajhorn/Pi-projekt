@@ -137,22 +137,22 @@ export default {
 .new-recipe {
   max-width: 600px;
   margin: 0 auto;
-  padding: 20px; /* Add padding for better spacing */
+  padding: 20px; 
 }
 
 .title-container {
   display: flex;
   align-items: center;
-  margin-bottom: 20px; /* Add margin to separate the title from the form */
+  margin-bottom: 20px; 
 }
 
 .title-container i {
-  margin-right: 20px; /* Increased spacing between icon and title */
+  margin-right: 20px; 
   cursor: pointer;
 }
 
 h2 {
-  margin: 0; /* Remove default margin */
+  margin: 0; 
 }
 
 .form-group {
@@ -176,7 +176,7 @@ input[type="number"] {
 }
 
 input[type="file"] {
-  display: none; /* Hide the default file input */
+  display: none; 
 }
 
 .custom-file-upload {
@@ -195,8 +195,8 @@ input[type="file"] {
 
 .button-group {
   display: flex;
-  justify-content: space-between; /* Space buttons evenly */
-  margin-top: 20px; /* Add margin to the top of the button group */
+  justify-content: space-between; 
+  margin-top: 20px; 
 }
 
 button {
