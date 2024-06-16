@@ -89,12 +89,11 @@ export default {
   cursor: pointer;
 }
 
-/* Override color for logout icon */
+
 .nav-item.logout i {
   color: #333333;
 }
 
-/* Remove button styling */
 .nav-item.logout {
   background-color: transparent;
   border: none;
