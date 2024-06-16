@@ -21,6 +21,13 @@
 
       <!-- Review button -->
       <button class="rate-btn" @click="toggleReviewForm">Rate</button>
+      <!-- Shate button -->
+      <!-- Share buttons -->
+<div class="share-buttons">
+  <button class="share-btn gmail" @click="shareGmail"><i class="fab fa-google"></i></button>
+  <button class="share-btn whatsapp" @click="shareWhatsApp"><i class="fab fa-whatsapp"></i></button>
+</div>
+
     </div>
 
     <!-- Review form -->
@@ -253,6 +260,21 @@ export default {
         this.selectedRating = rating;
       }
     },
+    
+    // Share via Gmail
+    shareGmail() {
+      const subject = encodeURIComponent('Check out this recipe!');
+      const body = encodeURIComponent(`Hey there,\n\nI found this awesome recipe and thought you might like it:\n${this.recipe.title}\n\nIngredients:\n${this.recipe.ingredients}\n\nMethods:\n${this.recipe.methods}\n\nCheck it out here: ${window.location.href}`);
+      const url = `mailto:?subject=${subject}&body=${body}`;
+      window.location.href = url;
+    },
+
+    // Share via WhatsApp
+    shareWhatsApp() {
+      const text = encodeURIComponent(`Check out this recipe:\n${this.recipe.title}\n\nIngredients:\n${this.recipe.ingredients}\n\nMethods:\n${this.recipe.methods}\n\n${window.location.href}`);
+      const url = `https://wa.me/?text=${text}`;
+      window.open(url, '_blank');
+    },
   },
 };
 </script>
@@ -264,7 +286,7 @@ export default {
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
-  padding-bottom: 100px; 
+  padding-bottom: 100px; /* Adjusted for navbar height */
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
@@ -309,7 +331,7 @@ export default {
 }
 
 .start-cooking-btn:hover {
-  background-color: #45a049; 
+  background-color: #45a049; /* Darker Green */
 }
 
 .clock {
@@ -358,7 +380,7 @@ export default {
 .button-container {
   display: flex;
   justify-content: space-between;
-  margin-top: 20px; 
+  margin-top: 20px; /* Add margin to separate from the other elements */
 }
 
 .star-rating {
@@ -495,5 +517,41 @@ export default {
   text-align: right;
   display: block;
 }
+/* Share Buttons Styles */
+.share-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.share-buttons button {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 10px 20px; /* Adjusted padding */
+  margin: 0 5px;
+  font-size: 14px; /* Adjusted font size */
+  cursor: pointer;
+  border-radius: 8px;
+  transition-duration: 0.4s;
+}
+
+.share-buttons button:hover {
+  background-color: #0056b3; /* Darker Blue */
+}
+
+.share-buttons .gmail {
+  background-color: #db4437; /* Gmail Red */
+}
+
+.share-buttons .whatsapp {
+  background-color: #25D366; /* WhatsApp Green */
+}
+
+.share-buttons .gmail i,
+.share-buttons .whatsapp i {
+  margin-right: 5px;
+}
+
 </style>
 
