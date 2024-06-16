@@ -21,7 +21,6 @@
 
       <!-- Review button -->
       <button class="rate-btn" @click="toggleReviewForm">Rate</button>
-      <!-- Shate button -->
       <!-- Share buttons -->
 <div class="share-buttons">
   <button class="share-btn gmail" @click="shareGmail"><i class="fab fa-google"></i></button>
@@ -281,12 +280,11 @@ export default {
 
 
 <style scoped>
-/* Recipe Details Styles */
 .recipe-details {
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
-  padding-bottom: 100px; /* Adjusted for navbar height */
+  padding-bottom: 100px; 
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
@@ -331,7 +329,7 @@ export default {
 }
 
 .start-cooking-btn:hover {
-  background-color: #45a049; /* Darker Green */
+  background-color: #45a049; 
 }
 
 .clock {
@@ -356,8 +354,7 @@ export default {
   margin-top: 10px;
   border-radius: 5px;
 }
-
-/* Rate Button Styles */
+  
 .rate-btn {
   background: #66cc80;
   border: none;
@@ -380,7 +377,7 @@ export default {
 .button-container {
   display: flex;
   justify-content: space-between;
-  margin-top: 20px; /* Add margin to separate from the other elements */
+  margin-top: 20px; 
 }
 
 .star-rating {
@@ -467,7 +464,6 @@ export default {
   background-color: #45a049;
 }
 
-/* Reviews List Styles */
 .reviews-list {
   list-style: none;
   padding: 0;
@@ -517,7 +513,7 @@ export default {
   text-align: right;
   display: block;
 }
-/* Share Buttons Styles */
+
 .share-buttons {
   display: flex;
   justify-content: center;
@@ -528,24 +524,24 @@ export default {
   background-color: #007bff;
   border: none;
   color: white;
-  padding: 10px 20px; /* Adjusted padding */
+  padding: 10px 20px; 
   margin: 0 5px;
-  font-size: 14px; /* Adjusted font size */
+  font-size: 14px; 
   cursor: pointer;
   border-radius: 8px;
   transition-duration: 0.4s;
 }
 
 .share-buttons button:hover {
-  background-color: #0056b3; /* Darker Blue */
+  background-color: #0056b3; 
 }
 
 .share-buttons .gmail {
-  background-color: #db4437; /* Gmail Red */
+  background-color: #db4437; 
 }
 
 .share-buttons .whatsapp {
-  background-color: #25D366; /* WhatsApp Green */
+  background-color: #25D366; 
 }
 
 .share-buttons .gmail i,
