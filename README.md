@@ -45,11 +45,11 @@ https://www.figma.com/design/yxlChACRMZjyKFvtu7LZPT/Plantenious?node-id=0-1&t=A7
 https://plantenious.vercel.app/
 
 <br>
-Test credentials <br>
+<h3>Test credentials</h1> <br>
 Admin: <br>
 mail: admin@gmail.com <br>
 password: Admin123 <br>
-
+<br>
 Korisnik: <br>
 mail: pero.peric@gmail.com <br>
 password: Pero123 <br>
