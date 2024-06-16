@@ -56,3 +56,5 @@ password: Pero123 <br>
 
 ## Javni link za video prikaz rada aplikacije
 
+<br>
+Za pokrenuti aplikaciju lokalno, potrebno je skinuti sve foldere i u terminalu napisati "npm run dev"
