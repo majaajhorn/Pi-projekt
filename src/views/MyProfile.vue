@@ -153,7 +153,7 @@ export default {
   height: 100vh;
   justify-content: center;
   position: relative;
-  padding-bottom: 60px; /* Ensure there's space for the fixed navbar */
+  padding-bottom: 60px; 
 }
 
 .profile-container {
