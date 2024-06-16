@@ -2,39 +2,40 @@
     <div class="statistics-container">
       <h1>Statistics</h1>
       <!-- Sort by dropdown -->
-<div class="sort-dropdown">
-  <label for="sort">Sort by:</label>
-  <select id="sort" v-model="sortOrder" @change="sortUsers">
-    <option value="asc">Alphabetically Ascending</option>
-    <option value="desc">Alphabetically Descending</option>
-  </select>
-  <i class="fas fa-chevron-down" @click="toggleSortDropdown"></i>
-  <ul v-if="sortDropdownOpen" class="sort-dropdown-list">
-    <li @click="sortOrder = 'asc'">Alphabetically Ascending</li>
-    <li @click="sortOrder = 'desc'">Alphabetically Descending</li>
-  </ul>
-</div>
+        <div class="sort-dropdown">
+          <label for="sort">Sort by:</label>
+          <select id="sort" v-model="sortOrder" @change="sortUsers">
+            <option value="asc">Alphabetically Ascending</option>
+            <option value="desc">Alphabetically Descending</option>
+          </select>
+          <i class="fas fa-chevron-down" @click="toggleSortDropdown"></i>
+          <ul v-if="sortDropdownOpen" class="sort-dropdown-list">
+            <li @click="sortOrder = 'asc'">Alphabetically Ascending</li>
+            <li @click="sortOrder = 'desc'">Alphabetically Descending</li>
+          </ul>
+        </div>
 
-<!-- Spacing -->
-<div class="spacing"></div>
+        <!-- Spacing -->
+        <div class="spacing"></div>
 
-<!-- Search input -->
-<div class="search-input">
-  <label for="search">Search by Email:</label>
-  <input type="text" id="search" v-model="searchTerm" @input="filterUsers" placeholder="Enter email to search">
-  <i class="fas fa-search" @click="filterUsers"></i>
-</div>
+        <!-- Search input -->
+        <div class="search-input">
+          <label for="search">Search by Email:</label>
+          <input type="text" id="search" v-model="searchTerm" @input="filterUsers" placeholder="Enter email to search">
+          <i class="fas fa-search" @click="filterUsers"></i>
+        </div>
+        
       <!-- Loading indicator -->
-      <div v-if="loading" class="loading">Loading...</div>
-      <!-- User list -->
-      <ul v-else class="user-list">
-        <li v-for="user in filteredUsers" :key="user.id" class="user-item" @click="showUserDetails(user)">
-          {{ user.email }} - Times Logged In: {{ user.timesLoggedIn }}
-        </li>
-      </ul>
+          <div v-if="loading" class="loading">Loading...</div>
+          <!-- User list -->
+          <ul v-else class="user-list">
+            <li v-for="user in filteredUsers" :key="user.id" class="user-item" @click="showUserDetails(user)">
+              {{ user.email }} - Times Logged In: {{ user.timesLoggedIn }}
+            </li>
+          </ul>
       <Navbar />
     </div>
-  </template>
+</template>
   
   <script>
   import { ref, onMounted } from 'vue';
@@ -160,7 +161,7 @@
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease;
-    cursor: pointer; /* Add cursor pointer for indicating clickable items */
+    cursor: pointer; 
   }
   
   .user-item:hover {
@@ -251,7 +252,7 @@
 }
 
 .spacing {
-  height: 20px; /* Adjust the height as needed */
+  height: 20px; 
 }
   </style>
   
