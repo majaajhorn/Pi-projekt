@@ -97,37 +97,6 @@ export default {
     await this.fetchRecipes();
   },
   methods: {
-    /*
-    async fetchRecipes() {
-      try {
-        if (!this.currentUser) {
-          console.error('No user logged in.');
-          this.loading = false;
-          return;
-        }
-        const userId = userDoc.id;
-        const recipesSnapshot = await getDocs(collection(db, 'users', userId, 'recepti'));
-        this.recipes = recipesSnapshot.docs.map(doc => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            title: data.title,
-            ingredients: data.ingredients,
-            courses: data.courses,
-            prepTime: data.prepTime,
-            cookingTime: data.cookingTime,
-            methods: data.methods,
-            imageUrl: data.imageUrl || null,
-            isFavorite: data.isFavorite || false
-          };
-        });
-      } catch (error) {
-        console.error('Error fetching recipes:', error);
-      } finally {
-        this.loading = false;
-      }
-    },
-    */
     async  fetchRecipes() {
   try {
     const db = getFirestore();
@@ -242,7 +211,7 @@ export default {
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
-  padding-bottom: 80px; /* Add padding to the bottom */
+  padding-bottom: 80px; 
 }
 
 h2 {
@@ -259,22 +228,22 @@ h2 {
 }
 
 .recipe-item {
-  width: calc(33.33% - 20px); /* Adjust width for responsiveness */
+  width: calc(33.33% - 20px); 
   margin-bottom: 20px;
   background-color: #C7F9CC;
   border-radius: 10px;
   padding: 15px;
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center content horizontally */
-  text-align: center; /* Center text */
+  align-items: center; 
+  text-align: center; 
 }
 
 .recipe-image-container {
   width: 150px;
   margin-bottom: 10px;
   display: flex;
-  justify-content: center; /* Center image horizontally */
+  justify-content: center; 
 }
 
 .recipe-image {
@@ -288,9 +257,9 @@ h2 {
 }
 
 .button-container {
-  margin-top: auto; /* Push buttons to the bottom */
+  margin-top: auto; 
   display: flex;
-  justify-content: center; /* Center buttons horizontally */
+  justify-content: center; 
 }
 
 .recipe-button {
@@ -302,19 +271,19 @@ h2 {
 }
 
 .recipe-button .fa-trash-alt {
-  color: black; /* Black color for delete button */
+  color: black; 
 }
 
 .recipe-button .fa-heart {
-  color: black; /* Red color for heart button */
+  color: black; 
 }
 
 .recipe-button:hover .fa-trash-alt {
-  color: black; /* Ensure delete button stays black on hover */
+  color: black; 
 }
 
 .recipe-button:hover .fa-heart {
-  color: darkred; /* Darker red on hover */
+  color: darkred; 
 }
 
 .edit-recipe {
@@ -359,8 +328,8 @@ h2 {
   background-color: #007BFF;
   color: #fff;
   cursor: pointer;
-  border-radius: 20px; /* Rounded corners */
-  transition: background-color 0.3s ease; /* Smooth transition */
+  border-radius: 20px; 
+  transition: background-color 0.3s ease;
 }
 
 .form-group button:hover {
@@ -385,7 +354,7 @@ h2 {
 }
 
 .cancel-button {
-  background-color: #dc3545; /* Red */
+  background-color: #dc3545; 
   border-radius: 5px;
   padding: 10px 20px;
 }
