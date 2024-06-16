@@ -105,7 +105,7 @@ body {
 
 .left {
   flex: 1;
-  background-image: url('../assets/login_wallpaper.jpg'); /* Update the path */
+  background-image: url('../assets/login_wallpaper.jpg'); 
   background-size: cover;
   height: 100vh;
 }
@@ -118,7 +118,6 @@ body {
 }
 
 .login-container {
-  /* Remove the background color, border, and box shadow */
   padding: 20px;
   width: 300px;
   text-align: center;
@@ -176,7 +175,7 @@ button:hover {
 }
 
 .black_text {
-  color: black; /* Text color */
+  color: black; 
 }
 
 .plant {
