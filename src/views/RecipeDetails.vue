@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import { db, auth } from '@/Firebase/firebase'; // Assuming you have auth exported from Firebase
+import { db, auth } from '@/Firebase/firebase'; 
 import { doc, getDoc, collection, addDoc, getDocs, query } from 'firebase/firestore';
 import Navbar from '../components/Navbar.vue';
 import alarmSound from '../assets/AlarmSound.mp3.mp3';
@@ -102,7 +102,7 @@ export default {
         minutes: 0,
         seconds: 0,
       },
-      alarmSoundSrc: alarmSound, // Use the imported alarm sound
+      alarmSoundSrc: alarmSound,
       showReviewForm: false,
       reviewDescription: '',
       starRating: 1,
