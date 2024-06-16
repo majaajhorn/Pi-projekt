@@ -84,7 +84,7 @@ body {
 
 .left {
   flex: 1;
-  background-image: url('../assets/login_wallpaper.jpg'); /* Update the path */
+  background-image: url('../assets/login_wallpaper.jpg'); 
   background-size: cover;
   height: 100vh;
 }
@@ -94,7 +94,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-left: 20px; /* Added padding to the left */
+  padding-left: 20px; 
 }
 
 .signup-container {
