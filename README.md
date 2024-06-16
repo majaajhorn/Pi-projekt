@@ -40,6 +40,10 @@ Admin ima dodatne funkcionalnosti: <br>
 
 ## Figma link <br>
 https://www.figma.com/design/yxlChACRMZjyKFvtu7LZPT/Plantenious?node-id=0-1&t=A7aH6gKPXLqFEnUc-1
+<br>
+
+## Javni link za video prikaz rada aplikacije <br>
+https://www.youtube.com/watch?v=XJXdYn6if34
 
 ## Javni link za aplikaciju <br>
 https://plantenious.vercel.app/
@@ -54,7 +58,6 @@ Korisnik: <br>
 mail: pero.peric@gmail.com <br>
 password: Pero123 <br>
 
-## Javni link za video prikaz rada aplikacije
 
 <br>
 Za pokrenuti aplikaciju lokalno, potrebno je skinuti sve foldere i u terminalu napisati "npm run dev"
