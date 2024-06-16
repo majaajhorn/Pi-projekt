@@ -52,13 +52,13 @@ export default {
   flex-direction: column;
   align-items: center;
   height: 100vh;
-  padding-bottom: 60px; /* Ensure there's space for the fixed navbar */
-  padding-top: 20px; /* Add padding to top for spacing */
+  padding-bottom: 60px; 
+  padding-top: 20px; 
   text-align: center;
 }
 
 h1 {
-  margin-bottom: 20px; /* Add margin below the header */
+  margin-bottom: 20px; 
 }
 
 .buttons-container {
@@ -66,7 +66,7 @@ h1 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex-grow: 1; /* Allow the buttons container to take up remaining space */
+  flex-grow: 1; 
 }
 
 #novi_recept {
@@ -82,8 +82,8 @@ h1 {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  width: 200px; /* Ensure consistent button width */
-  margin-bottom: 10px; /* Add margin between buttons */
+  width: 200px; 
+  margin-bottom: 10px; 
 }
 
 #novi_recept:hover {
